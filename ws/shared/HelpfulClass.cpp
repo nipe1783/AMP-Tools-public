@@ -16,7 +16,20 @@ amp::Polygon Helper::minkowskiSum(amp::Polygon& p1, amp::Polygon& p2){
     Eigen::Vector2d newVert;
     amp::Polygon cObstacle;
     while( i != n + 1 && j != m + 1){
-        newVert = p1.verticesCCW()[i] + p2.verticesCCW()[j];
+        if(i == n && j == m){
+            newVert = p1.verticesCCW()[0] + p2.verticesCCW()[0];
+        }
+        else if (i == n)
+        {
+            newVert = p1.verticesCCW()[0] + p2.verticesCCW()[j];
+        }
+        else if (j == m)
+        {
+            newVert = p1.verticesCCW()[i] + p2.verticesCCW()[0];
+        }
+        else{
+            newVert = p1.verticesCCW()[i] + p2.verticesCCW()[j];
+        }
         cObstacle.verticesCCW().push_back(newVert);
         if(i == n-1){
             angle1 = Helper().angle(p1.verticesCCW()[i], p1.verticesCCW()[0]);
@@ -30,9 +43,10 @@ amp::Polygon Helper::minkowskiSum(amp::Polygon& p1, amp::Polygon& p2){
         else{
             angle2 = Helper().angle(p2.verticesCCW()[j], p2.verticesCCW()[j+1]);
         }
-        std::cout << "angle1: " << angle1 * (180.0 / M_PI) << std::endl;
-        std::cout << "angle2: " << angle2 * (180.0 / M_PI) << std::endl;
-        std::cout << "newVert: " << newVert << std::endl;
+        // std::cout << "angle1: " << angle1 * (180.0 / M_PI) << std::endl;
+        // std::cout << "angle2: " << angle2 * (180.0 / M_PI) << std::endl;
+        // std::cout << "newVert: x: " << newVert[0] << " y: "<< newVert[1] << std::endl;
+        // std::cout << "i: " << i << " j: " << j << std::endl;
         if(angle1 < angle2){
             i++;
         }
@@ -107,4 +121,31 @@ amp::Polygon Helper::orderVertices(amp::Polygon& polygon){
         orderedPolygon.verticesCCW().push_back(*it);
     }
     return orderedPolygon;
+}
+
+/**
+ * @brief rotates a polygon arount a point by theta radians. creates a new polygon.
+ * 
+ * @param paramName polygon and theta value
+ * @return returnType Description of return value
+ **/
+amp::Polygon Helper::rotatePolygon(amp::Polygon& p, Eigen::Vector2d rotationVertex, float theta) {
+    amp::Polygon rotatedPolygon;
+    Eigen::Matrix2d rotationMatrix;
+    rotationMatrix << cos(theta), -sin(theta), sin(theta), cos(theta);
+
+    for (int i = 0; i < p.verticesCCW().size(); i++) {
+        // 1. Translate vertex so that rotationVertex becomes the origin
+        Eigen::Vector2d translatedVertex = p.verticesCCW()[i] - rotationVertex;
+        
+        // 2. Rotate the translated vertex
+        Eigen::Vector2d rotatedTranslatedVertex = rotationMatrix * translatedVertex;
+        
+        // 3. Translate the vertex back
+        Eigen::Vector2d finalVertex = rotatedTranslatedVertex + rotationVertex;
+        
+        rotatedPolygon.verticesCCW().push_back(finalVertex);
+    }
+
+    return rotatedPolygon;
 }

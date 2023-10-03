@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/ws/shared"
+                "${workspaceFolder}/ws/shared",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include"
             ],
             "defines": [],
             "macFrameworkPath": [
