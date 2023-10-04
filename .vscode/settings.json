@@ -63,6 +63,9 @@
         "functional": "cpp",
         "iterator": "cpp",
         "memory_resource": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ctime": "cpp",
+        "ratio": "cpp",
+        "cinttypes": "cpp"
     }
 }

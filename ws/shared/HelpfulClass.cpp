@@ -1,5 +1,8 @@
 #include "HelpfulClass.h"
-#include <cmath> 
+#include <cmath>
+#include <list>
+#include <vector>
+#include <Eigen/Geometry> 
 
 void MyClass::hereIsAMethod() {
     // Implementation
@@ -43,10 +46,6 @@ amp::Polygon Helper::minkowskiSum(amp::Polygon& p1, amp::Polygon& p2){
         else{
             angle2 = Helper().angle(p2.verticesCCW()[j], p2.verticesCCW()[j+1]);
         }
-        // std::cout << "angle1: " << angle1 * (180.0 / M_PI) << std::endl;
-        // std::cout << "angle2: " << angle2 * (180.0 / M_PI) << std::endl;
-        // std::cout << "newVert: x: " << newVert[0] << " y: "<< newVert[1] << std::endl;
-        // std::cout << "i: " << i << " j: " << j << std::endl;
         if(angle1 < angle2){
             i++;
         }
@@ -148,4 +147,80 @@ amp::Polygon Helper::rotatePolygon(amp::Polygon& p, Eigen::Vector2d rotationVert
     }
 
     return rotatedPolygon;
+}
+
+/**
+ * @brief Returns true if line segment intersects with any obstacle in environment.
+ * 
+ * @param environment Description of parameter
+ * @return true for interesection false for no intersection.
+ **/
+bool Helper::intersects(amp::Environment2D& environment, Eigen::Vector2d& start, Eigen::Vector2d& end){
+    Eigen::Hyperplane<double,2> plane1;
+    Eigen::Hyperplane<double,2> plane2;
+    Eigen::Vector2d vert1;
+    Eigen::Vector2d vert2;
+    Eigen::Vector2d intersection;
+    plane1 = Eigen::Hyperplane<double,2>::Through(start, end);
+    for(amp::Obstacle2D obstacle : environment.obstacles){
+        std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
+        for(size_t i = 0; i < vertices.size(); i++){
+            if (i == vertices.size() - 1) {
+                // create line from two vertices.
+                vert1 = vertices[0];
+                vert2 = vertices[i];
+                plane2 = Eigen::Hyperplane<double,2>::Through(vert1, vert2);
+                intersection = plane1.intersection(plane2);
+
+                //check to see if intersection is on both line segments.
+                // case 1: new position is in obstacle.
+                if(isPointOnSegment(start, end, intersection) && isPointOnSegment(vert1, vert2, intersection)){
+                   return true;
+                }
+                
+            }
+            else{
+                // create line from two vertices.
+                vert1 = vertices[i];
+                vert2 = vertices[i+1];
+                plane2 = Eigen::Hyperplane<double,2>::Through(vert1, vert2);
+                intersection = plane1.intersection(plane2);
+                
+                //check to see if intersection is on both line segments.
+                // case 1: new position is in obstacle.
+                if(isPointOnSegment(start, end, intersection) && isPointOnSegment(vert1, vert2, intersection)){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Helper::isPointOnSegment(const Eigen::Vector2d &start, const Eigen::Vector2d &end, const Eigen::Vector2d &point) {
+    Eigen::Hyperplane<double, 2> line = Eigen::Hyperplane<double, 2>::Through(start, end);
+    double epsilon = 1e-10;
+    // Check if the point lies on the line
+    if (std::abs(line.signedDistance(point)) > epsilon) {
+        return false;
+    }
+    
+    // Check if the point lies within the bounds of the segment
+    bool isWithinXBounds = point[0] >= std::min(start[0], end[0]) && point[0] <= std::max(start[0], end[0]);
+    float diffX1 = std::fabs(point[0] - start[0]);
+    float diffX2 = std::fabs(point[0] - end[0]);
+    if (diffX1 < epsilon && diffX2 < epsilon) {
+        isWithinXBounds = true;
+    }
+    bool isWithinYBounds = point[1] >= std::min(start[1], end[1]) && point[1] <= std::max(start[1], end[1]);
+    float diffY1 = std::fabs(point[1] - start[1]);
+    float diffY2 = std::fabs(point[1] - end[1]);
+    if (diffY1 < epsilon && diffY2 < epsilon) {
+        isWithinYBounds = true;
+    }
+    if (isWithinXBounds && isWithinYBounds) {
+        return true;
+    }
+    
+    return false;
 }

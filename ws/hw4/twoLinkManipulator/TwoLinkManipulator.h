@@ -4,11 +4,11 @@
 #include <cmath>
 
 namespace amp {
-    class ThreeLinkManipulator : public amp::LinkManipulator2D{
+    class TwoLinkManipulator : public amp::LinkManipulator2D{
         public:
             // Constructor
-            ThreeLinkManipulator(const std::vector<double>& link_lengths);
-            ~ThreeLinkManipulator();
+            TwoLinkManipulator(const std::vector<double>& link_lengths);
+            ~TwoLinkManipulator();
 
             // methods
             Eigen::Vector2d getJointLocation(const ManipulatorState& state, uint32_t joint_index) const override;

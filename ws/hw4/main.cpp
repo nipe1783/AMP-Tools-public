@@ -8,6 +8,9 @@
 #include "HelpfulClass.h"
 
 #include "threeLinkManipulator/ThreeLinkManipulator.h"
+#include "twoLinkManipulator/TwoLinkManipulator.h"
+#include "twoLinkManipulatorProblem/TwoLinkManipulatorProblem.h"
+#include "twoLinkConfigurationSpace/TwoLinkConfigurationSpace.h"
 
 using namespace amp;
 #include <cmath> 
@@ -30,7 +33,6 @@ int main(int argc, char** argv) {
             // robot.verticesCCW().push_back(Eigen::Vector2d(2.0, 3.0));
             // robot.verticesCCW().push_back(Eigen::Vector2d(1.0, 3.0));
             
-
             // amp::Polygon cSpaceObstacle;
             // cSpaceObstacle = Helper().minkowskiDiff(obstacle, robot);
             // polygons2D.push_back(cSpaceObstacle);
@@ -76,7 +78,21 @@ int main(int argc, char** argv) {
             // amp::Visualizer::makeFigure(manipulator, state);
             // amp::Visualizer::showFigures();
 
-    
+    // 3.
+        // a:
+            std::vector<double> link_lengths = {1.0, 1.0};
+            std::vector<double> state = {0, 0};
+            amp::TwoLinkManipulator manipulator(link_lengths);
+            amp::Environment2D environment;
+            amp::Obstacle2D obstacle;
+            obstacle.verticesCCW().push_back(Eigen::Vector2d(0.25, 0.25));
+            obstacle.verticesCCW().push_back(Eigen::Vector2d(0, 0.75));
+            obstacle.verticesCCW().push_back(Eigen::Vector2d(-0.25, 0.25)); 
+            environment.obstacles.push_back(obstacle);
+            amp::TwoLinkConfigurationSpace configurationSpace(0, 2*M_PI, 0, 2*M_PI);
+            configurationSpace.setGridCSpace(manipulator, environment);
+            amp::Visualizer::makeFigure(configurationSpace.gridCSpace);
+            amp::Visualizer::showFigures();
 
     // Grade method
     //amp::HW4::grade<MyLinkManipulator>(constructor, "nonhuman.biologic@myspace.edu", argc, argv);
