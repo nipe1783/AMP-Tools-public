@@ -7,6 +7,10 @@
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/ws/shared",
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include",
                 "${workspaceFolder}/include"
             ],
             "defines": [],
