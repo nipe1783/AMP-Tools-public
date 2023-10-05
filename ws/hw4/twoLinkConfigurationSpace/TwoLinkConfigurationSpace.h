@@ -12,7 +12,6 @@ namespace amp {
 
             // methods
             bool inCollision(double x0, double x1) const override;
-            void setGridCSpace(TwoLinkManipulator manipulator, Environment2D environment);
 
             // fields
             double resolution_x0;

@@ -71,18 +71,18 @@ int main(int argc, char** argv) {
     //         amp::Visualizer::showFigures();
 
     //     // b:
-    //         std::vector<double> link_lengths_b = {1, .5, 1};
-    //         ThreeLinkManipulator manipulator_b(link_lengths_b);
-    //         std::vector<double> state_b = manipulator_b.getConfigurationFromIK(Eigen::Vector2d(2.0, 0));
-    //         std::cout<< "theta1: " << state_b[0] << " theta2: " << state_b[1] << " theta3: " << state_b[2] << std::endl;
-    //         amp::Visualizer::makeFigure(manipulator_b, state_b);
-    //         amp::Visualizer::showFigures();
+            std::vector<double> link_lengths_b = {1.62796, 0.461709, 0.513};
+            ThreeLinkManipulator manipulator_b(link_lengths_b);
+            std::vector<double> state_b = manipulator_b.getConfigurationFromIK(Eigen::Vector2d(2.60267, 0));
+            std::cout<< "theta1: " << state_b[0] << " theta2: " << state_b[1] << " theta3: " << state_b[2] << std::endl;
+            amp::Visualizer::makeFigure(manipulator_b, state_b);
+            amp::Visualizer::showFigures();
 
     // 3.
-        std::vector<double> link_lengths_3 = {1.0, 1.0};
-        std::vector<double> state_3 = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
-        amp::TwoLinkManipulator manipulator_3(link_lengths_3);
-        amp::GridCSpace2D2LinkConstructor configurationSpaceConstructor;
+        // std::vector<double> link_lengths_3 = {1.0, 1.0};
+        // std::vector<double> state_3 = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
+        // amp::TwoLinkManipulator manipulator_3(link_lengths_3);
+        // amp::GridCSpace2D2LinkConstructor configurationSpaceConstructor;
         // a:
             // amp::Environment2D environment_a;
             // amp::Obstacle2D obstacle_a;
@@ -137,6 +137,6 @@ int main(int argc, char** argv) {
     //         amp::Visualizer::showFigures();
 
     // Grade method
-    amp::HW4::grade<TwoLinkManipulator>(configurationSpaceConstructor, "nipe1783@colorado.edu", argc, argv);
+    // amp::HW4::grade<TwoLinkManipulator>(configurationSpaceConstructor, "nipe1783@colorado.edu", argc, argv);
     return 0;
 }

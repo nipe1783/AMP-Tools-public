@@ -20,7 +20,11 @@ namespace amp{
     }
 
     ManipulatorState TwoLinkManipulator::getConfigurationFromIK(const Eigen::Vector2d& end_effector_location) const {
-
+        std::cout<<"++++++++"<<std::endl;
+        for(int i = 0; i < nLinks(); i++){
+            std::cout<< m_link_lengths[i] << std::endl;
+        }
+        std::cout<<"---------"<<std::endl;
         if(nLinks() == 2)
         {
             double theta2;
