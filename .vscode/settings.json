@@ -66,6 +66,13 @@
         "utility": "cpp",
         "ctime": "cpp",
         "ratio": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "span": "cpp",
+        "locale": "cpp",
+        "__hash_table": "cpp",
+        "bitset": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "valarray": "cpp"
     }
 }

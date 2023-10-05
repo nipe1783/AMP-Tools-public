@@ -8,6 +8,7 @@ namespace amp {
         public:
             // Constructor
             TwoLinkManipulator(const std::vector<double>& link_lengths);
+            TwoLinkManipulator();
             ~TwoLinkManipulator();
 
             // methods
