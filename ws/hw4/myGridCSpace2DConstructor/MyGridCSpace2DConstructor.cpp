@@ -1,12 +1,12 @@
-#include "GridCSpace2D2LinkConstructor.h"
+#include "MyGridCSpace2DConstructor.h"
 #include "AMPCore.h"
-#include "../twoLinkConfigurationSpace/TwoLinkConfigurationSpace.h"
+#include "../myConfigurationSpace/MyConfigurationSpace.h"
 #include "HelpfulClass.h"
 #include <cmath>
 
 namespace amp{
     
-    std::unique_ptr<amp::GridCSpace2D> GridCSpace2D2LinkConstructor::construct(const amp::LinkManipulator2D& manipulator, const amp::Environment2D& env){
+    std::unique_ptr<amp::GridCSpace2D> MyGridCSpace2DConstructor::construct(const amp::LinkManipulator2D& manipulator, const amp::Environment2D& env){
 
         Eigen::Vector2d endPoint;
         Eigen::Vector2d startPoint;
@@ -19,7 +19,7 @@ namespace amp{
         double resolution_x1 = (x1_max - x1_min) / density_x1;
         double resolution_x0 = (x0_max - x0_min) / density_x0;
 
-        std::unique_ptr<amp::GridCSpace2D> cSpace = std::make_unique<amp::TwoLinkConfigurationSpace>(density_x0, density_x1, x0_min, x0_max, x1_min, x1_max);
+        std::unique_ptr<amp::GridCSpace2D> cSpace = std::make_unique<amp::MyConfigurationSpace>(density_x0, density_x1, x0_min, x0_max, x1_min, x1_max);
 
         double x0;
         double x1;

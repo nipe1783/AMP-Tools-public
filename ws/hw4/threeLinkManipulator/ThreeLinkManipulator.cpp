@@ -27,13 +27,13 @@ namespace amp{
         Eigen::Vector2d joint3location;
 
         // check all possible psi values (psi is angle from arm 3 to x axis.)
-        for(double psi = 0; psi <= 2*M_PI; psi += 0.001){
-
+        for(double psi = 0; psi <= 2*M_PI; psi += 0.1){
             // compute location of joint 3 to perform 2DOF manipulator IK
             joint3location[0] = end_effector_location[0] - getLinkLengths()[2] * cos(psi);
             joint3location[1] = end_effector_location[1] - getLinkLengths()[2] * sin(psi);
 
             c_2 = (pow(joint3location[0], 2) + pow(joint3location[1], 2) - pow(getLinkLengths()[0], 2) - pow(getLinkLengths()[1], 2)) / (2 * getLinkLengths()[0] * getLinkLengths()[1]);
+            std::cout<<"c_2: "<<c_2<<std::endl;
             s_2 = sqrt(1 - pow(c_2, 2));
 
             // check if joint 3 location is reachable
