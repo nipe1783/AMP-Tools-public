@@ -22,8 +22,8 @@ int main(int argc, char** argv) {
         Path2D path = algo.plan(problem);
 
         // Visualize the path and environment
-        Visualizer::makeFigure(problem, path);
-        Visualizer::showFigures();
+        // Visualizer::makeFigure(problem, path);
+        // Visualizer::showFigures();
 
     return 0;
 }
