@@ -28,3 +28,25 @@ bool Helper::isPointOnSegment(const Eigen::Vector2d &start, const Eigen::Vector2
     
     return false;
 };
+
+double Helper::distance(Eigen::Vector2d p1, Eigen::Vector2d p2){
+    return std::sqrt(std::pow(p1[0] - p2[0], 2) + std::pow(p1[1] - p2[1], 2));
+}
+
+Eigen::Vector2d Helper::shortestDist(Eigen::Vector2d vert1, Eigen::Vector2d vert2, Eigen::Vector2d point){
+    Eigen::Vector2d dir = vert2 - vert1;
+    double lengthSquared = dir.squaredNorm();  // length of vert1-vert2 squared
+
+    // If the segment is just a point, return the point
+    if(lengthSquared == 0.0) return vert1;
+
+    // Calculate the projection of point onto the line defined by vert1 and vert2
+    double t = (point - vert1).dot(dir) / lengthSquared;
+
+    // If t is in the [0, 1] range, it means the projection is within the segment
+    if(t < 0.0) return vert1;
+    else if(t > 1.0) return vert2;
+
+    Eigen::Vector2d projection = vert1 + t * dir;
+    return projection;
+}

@@ -16,7 +16,7 @@ namespace amp{
              * @param prob robot environment.
              * @return vector representing the attractive vector.
              **/
-            Eigen::Vector2d uAtt(const Problem2D& prob);
+            Eigen::Vector2d uAtt(const Problem2D& prob, Eigen::Vector2d pos, double zeta, double dStarGoal);
 
             /**
              * @brief Computes the repelling forces from the robot to obstacles
@@ -24,6 +24,6 @@ namespace amp{
              * @param prob robot environment.
              * @return vector representing the repelling vector.
              **/
-            Eigen::Vector2d uRep(const Problem2D& prob);
+            Eigen::Vector2d uRep(const Problem2D& prob, Eigen::Vector2d pos, double nu, double qStar);
     };
 };

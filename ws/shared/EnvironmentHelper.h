@@ -5,14 +5,14 @@
 class EnvironmentHelper {
     public:
         /**
-         * @brief Computes distance from robots position pos to a point on the ith obstacle in the environment.
+         * @brief Computes closest point on obstacles perimeter to robots position pos.
          * 
          * @param prob robot environment.
          * @param pos robots position.
          * @param i index of the obstacle.
-         * @return distance to point on obstacle
+         * @return obstacle reference point
          **/
-        static double distToObstacle(const amp::Problem2D& prob, Eigen::Vector2d pos, int i);
+        static Eigen::Vector2d obstacleRefPoint(const amp::Obstacle2D &obstacle, Eigen::Vector2d &pos);
 
         /**
          * @brief Computes the centroid of the ith obstacle in the environment.
