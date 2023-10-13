@@ -15,11 +15,11 @@ namespace amp{
         Eigen::Vector2d dir;
         Eigen::Vector2d att;
         Eigen::Vector2d rep;
-        double stepSize = 0.1;
+        double stepSize = 0.5;
         double dStarGoal = 0.2;
-        double zeta = .1;
-        double nu = .1;
-        double qStar = 0.1;
+        double zeta = 0.1;
+        double nu = 0.005;
+        double qStar = 5;
         int i = 0;
         double pathLength = 0;
         path.waypoints.push_back(currPos);
@@ -61,7 +61,14 @@ namespace amp{
             c = EnvironmentHelper().obstacleRefPoint(prob.obstacles[i], pos);
             dist = Helper().distance(pos, c);
             if(dist < qStar){
-                dist = Helper().distance(pos, c);
+                currStep = nu * (1/qStar - 1/(dist)) * ((pos - c) / dist) / std::pow(dist, 2);
+                step += currStep;
+            }
+            else{
+                step += Eigen::Vector2d(0, 0);
+            }
+            c = EnvironmentHelper().computeCentroid(prob.obstacles[i]);
+            if(dist < qStar){
                 currStep = nu * (1/qStar - 1/(dist)) * ((pos - c) / dist) / std::pow(dist, 2);
                 step += currStep;
             }

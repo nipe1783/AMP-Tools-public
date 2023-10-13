@@ -16,14 +16,24 @@ using namespace amp;
 int main(int argc, char** argv) {
     
     // problem 1: workspace 1
-        // Problem2D problem = HW5::getWorkspace1();
-        // Problem2D problem = HW2::getWorkspace1();
-        Problem2D problem = HW2::getWorkspace2();
+        Problem2D problem = HW5::getWorkspace1();
 
         MyGDAlgorithm algo;
         Path2D path = algo.plan(problem);
 
         // Visualize the path and environment
+        Visualizer::makeFigure(problem, path);
+        Visualizer::showFigures();
+
+    // problem 2: workspace 2
+        problem = HW2::getWorkspace1();
+        path = algo.plan(problem);
+        Visualizer::makeFigure(problem, path);
+        Visualizer::showFigures();
+
+    // problem 3: workspace 3
+        problem = HW2::getWorkspace2();
+        path = algo.plan(problem);
         Visualizer::makeFigure(problem, path);
         Visualizer::showFigures();
 

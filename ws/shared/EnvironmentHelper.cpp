@@ -8,7 +8,7 @@ Eigen::Vector2d EnvironmentHelper::obstacleRefPoint(const amp::Obstacle2D &obsta
     Eigen::Vector2d refPoint;
     // step 1: compute centroid
     Eigen::Vector2d centroid = computeCentroid(obstacle);
-    
+
     // step 2: check if pos to centroid intersect.
     for(int i = 0; i < obstacle.verticesCCW().size(); i++){
         if(i == obstacle.verticesCCW().size() - 1){
