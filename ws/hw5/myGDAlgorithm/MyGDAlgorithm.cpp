@@ -24,7 +24,7 @@ namespace amp{
         double pathLength = 0;
         path.waypoints.push_back(currPos);
         // currPos = currPos + Eigen::Vector2d(0.0, -0.1);
-        while(Helper().distance(currPos, prob.q_goal) > 0.25 && i < 10000){
+        while(Helper().distance(currPos, prob.q_goal) > 0.25 && i <5000){
             att = uAtt(prob, currPos, zeta, dStarGoal);
             rep = uRep(prob, currPos, nu, qStar);
             dir = att + rep;
@@ -35,7 +35,7 @@ namespace amp{
             path.waypoints.push_back(currPos);
             i++;
         }
-        // path.waypoints.push_back(prob.q_goal);
+        path.waypoints.push_back(prob.q_goal);
         pathLength += Helper().distance(currPos, prob.q_goal);
         std::cout << "Path Length: " << pathLength << std::endl;
         return path;

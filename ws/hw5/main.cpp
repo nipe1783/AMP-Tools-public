@@ -37,5 +37,7 @@ int main(int argc, char** argv) {
         Visualizer::makeFigure(problem, path);
         Visualizer::showFigures();
 
+    // HW5::grade(algo, "nipe1783@colorado.edu", argc, argv);
+
     return 0;
 }
