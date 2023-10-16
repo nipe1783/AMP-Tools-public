@@ -12,6 +12,7 @@ namespace amp{
 
             // methods
             std::unique_ptr<amp::GridCSpace2D> constructDiscretizedWorkspace(const amp::Environment2D& environment) override;
-            Path2D plan(const Problem2D& prob) override;
+            amp::Path2D planInCSpace(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace) override;
+            amp::Graph<int> constructGraph(const amp::GridCSpace2D& grid_cspace, const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal);
     };
 };

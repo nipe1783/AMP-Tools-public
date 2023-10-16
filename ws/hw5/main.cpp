@@ -5,9 +5,6 @@
 #include "hw/HW5.h"
 #include "hw/HW2.h"
 
-// Include the header of the shared class
-#include "HelpfulClass.h"
-
 // Include the header of your algorithm
 #include "myGDAlgorithm/MyGDAlgorithm.h"
 

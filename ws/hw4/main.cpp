@@ -5,10 +5,10 @@
 #include "hw/HW4.h"
 
 // Include the header of the shared class
-#include "HelpfulClass.h"
+#include "Helper.h"
+#include "MyConfigurationSpace.h"
 
 #include "myLinkManipulator/MyLinkManipulator.h"
-#include "myConfigurationSpace/MyConfigurationSpace.h"
 #include "myGridCSpace2DConstructor/MyGridCSpace2DConstructor.h"
 
 using namespace amp;

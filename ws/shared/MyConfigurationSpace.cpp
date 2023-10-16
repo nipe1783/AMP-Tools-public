@@ -1,7 +1,6 @@
 #include "MyConfigurationSpace.h"
-#include "../myLinkManipulator/MyLinkManipulator.h"
 #include "AMPCore.h"
-#include "HelpfulClass.h"
+#include "Helper.h"
 #include <cmath> 
 
 namespace amp {
@@ -26,5 +25,9 @@ namespace amp {
             x1_grid = size().second - 1;
         }
         return (*this)(x0_grid, x1_grid);
+    }
+
+    std::pair<std::size_t, std::size_t> MyConfigurationSpace::getCellFromPoint(double x0, double x1) const{
+        return std::make_pair(std::round(x0 / resolution_x0), std::round(x1 / resolution_x1));
     }
 }

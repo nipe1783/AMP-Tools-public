@@ -24,4 +24,12 @@ class Helper{
         double distance(Eigen::Vector2d p1, Eigen::Vector2d p2);
         
         Eigen::Vector2d shortestDist(Eigen::Vector2d vert1, Eigen::Vector2d vert2, Eigen::Vector2d point);
+
+        static amp::Polygon minkowskiSum(const amp::Polygon& obstacle,const amp::Polygon& robot);
+        static amp::Polygon minkowskiDiff(const amp::Polygon& obstacle,const amp::Polygon& robot);
+        static amp::Polygon rotatePolygon(const amp::Polygon& p, Eigen::Vector2d rotationVertex, float theta);
+        bool intersects(const amp::Environment2D& environment, Eigen::Vector2d& start, Eigen::Vector2d& end);
+        bool polygonIntersect(const amp::Polygon& p1,const amp::Polygon& p2);
+        float angle(const Eigen::Vector2d& v1,const Eigen::Vector2d& v2);
+        amp::Polygon orderVertices(const amp::Polygon& polygon);
 };

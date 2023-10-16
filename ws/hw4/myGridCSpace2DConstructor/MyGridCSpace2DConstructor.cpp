@@ -1,7 +1,7 @@
 #include "MyGridCSpace2DConstructor.h"
 #include "AMPCore.h"
-#include "../myConfigurationSpace/MyConfigurationSpace.h"
-#include "HelpfulClass.h"
+#include "Helper.h"
+#include "MyConfigurationSpace.h"
 #include <cmath>
 
 namespace amp{

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AMPCore.h"
-#include "../myLinkManipulator/MyLinkManipulator.h"
 
 namespace amp {
     class MyConfigurationSpace : public amp::GridCSpace2D {
@@ -12,6 +11,7 @@ namespace amp {
 
             // methods
             bool inCollision(double x0, double x1) const override;
+            std::pair<std::size_t, std::size_t> getCellFromPoint(double x0, double x1) const override;
 
             // fields
             double resolution_x0;
