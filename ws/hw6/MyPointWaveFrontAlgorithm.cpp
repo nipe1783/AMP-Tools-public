@@ -54,16 +54,11 @@ namespace amp{
         std::pair<std::size_t, std::size_t> goalCell = grid_cspace.getCellFromPoint(q_goal[0], q_goal[1]);
         std::pair<std::size_t, std::size_t> currentCell = goalCell;
         amp::Graph<int> graph;
-        amp::Node node = 2;
+        amp::Node currNode = 2;
         for(int i = 0; i < 10; i++){
-
+            
         }
         return path;
-    }
-
-    amp::Graph<int> MyPointWaveFrontAlgorithm::constructGraph(const amp::GridCSpace2D& grid_cspace, const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal){
-        amp::Graph<int> graph;
-        return graph;
     }
     
 }
