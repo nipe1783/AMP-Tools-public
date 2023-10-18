@@ -12,7 +12,8 @@ namespace amp {
             // methods
             bool inCollision(double x0, double x1) const override;
             std::pair<std::size_t, std::size_t> getCellFromPoint(double x0, double x1) const override;
-
+            Eigen::Vector2d getPointFromCell(std::size_t x0, std::size_t x1) const;
+            
             // fields
             double resolution_x0;
             double resolution_x1;

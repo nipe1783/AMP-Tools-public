@@ -27,7 +27,7 @@ namespace amp{
 
     std::unique_ptr<amp::GridCSpace2D> MyPointWaveFrontAlgorithm::constructDiscretizedWorkspace(const amp::Environment2D& environment){
         
-        double grid_size = 2;
+        double grid_size = 0.25;
         double density_x0 = (environment.x_max - environment.x_min) / grid_size;
         double density_x1 = (environment.y_max - environment.y_min) / grid_size;
 
@@ -65,81 +65,71 @@ namespace amp{
 
     amp::Path2D MyPointWaveFrontAlgorithm::planInCSpace(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace){
         amp::Path2D path;
-        constructTree(q_init, q_goal, grid_cspace);
+        Eigen::Vector2d step;
+        double x0;
+        double x1;
+        double resolution_x0 = 0.25;
+        double resolution_x1 = 0.25;
+        path.waypoints.push_back(q_init);
+        std::vector<std::pair<std::size_t, std::size_t>> gridPath = constructTree(q_init, q_goal, grid_cspace);
+        for(auto& cell : gridPath){
+            x0 = (cell.first + 1) * resolution_x0 + grid_cspace.x0Bounds().first;
+            x1 = (cell.second + 1) * resolution_x1 + grid_cspace.x1Bounds().first;
+            path.waypoints.push_back(Eigen::Vector2d(x0, x1));
+        }
+        path.waypoints.push_back(q_goal);
         return path;
     }
 
-    void MyPointWaveFrontAlgorithm::constructTree(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace){
+    std::vector<std::pair<std::size_t, std::size_t>> MyPointWaveFrontAlgorithm::constructTree(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace) {
+        
         int x0_grid = grid_cspace.size().first;
         int x1_grid = grid_cspace.size().second;
+
         std::pair<std::size_t, std::size_t> startCell = grid_cspace.getCellFromPoint(q_init[0], q_init[1]);
         std::pair<std::size_t, std::size_t> goalCell = grid_cspace.getCellFromPoint(q_goal[0], q_goal[1]);
-        std::pair<std::size_t, std::size_t> currentCell = goalCell;
-        std::pair<std::size_t, std::size_t> childCell;
-        std::queue<TreeNode> treeQueue;
-        std::unordered_set<std::pair<std::size_t, std::size_t>, pair_hash> visited;
-        TreeNode currentNode;
-        currentNode.cell = currentCell;
-        Tree tree;
-        tree.root = &currentNode;
-        treeQueue.push(currentNode);
-        while(!treeQueue.empty()){
-            
-            currentNode = treeQueue.front();
-            currentCell = currentNode.cell;
-            treeQueue.pop();
-            // check currentCell reachable neighbors.
-            // check right:
-            childCell = std::make_pair(currentCell.first + 1, currentCell.second);
-            if(childCell.first < x0_grid && !visited.count(childCell)){
-                if(!grid_cspace(childCell.first, childCell.second)){
-                    TreeNode childNode = TreeNode();
-                    childNode.cell = childCell;
-                    childNode.parent = &currentNode;
-                    currentNode.children.push_back(&childNode);
-                    treeQueue.push(childNode);
-                    visited.insert(childNode.cell);
-                }
-            }
-            // check down:
-            childCell = std::make_pair(currentCell.first, currentCell.second - 1);
-            if(childCell.second >= 0 && !visited.count(childCell)){
-                if(!grid_cspace(childCell.first, childCell.second)){
-                    TreeNode childNode = TreeNode();
-                    childNode.cell = childCell;
-                    childNode.parent = &currentNode;
-                    currentNode.children.push_back(&childNode);
-                    treeQueue.push(childNode);
-                    visited.insert(childNode.cell);
-                }
-            }
-            // check left:
-            childCell = std::make_pair(currentCell.first - 1, currentCell.second);
-            if(childCell.first >= 0 && !visited.count(childCell)){
-                if(!grid_cspace(childCell.first, childCell.second)){
-                    TreeNode childNode = TreeNode();
-                    childNode.cell = childCell;
-                    childNode.parent = &currentNode;
-                    currentNode.children.push_back(&childNode);
-                    treeQueue.push(childNode);
-                    visited.insert(childNode.cell);
-                }
-            }
-            // check up:
-            childCell = std::make_pair(currentCell.first, currentCell.second + 1);
-            if(childCell.second < x1_grid && !visited.count(childCell)){
-                if(!grid_cspace(childCell.first, childCell.second)){
-                    TreeNode childNode = TreeNode();
-                    childNode.cell = childCell;
-                    childNode.parent = &currentNode;
-                    currentNode.children.push_back(&childNode);
-                    treeQueue.push(childNode);
-                    visited.insert(childNode.cell);
-                }
-            }
+        std::pair<std::size_t, std::size_t> currentCell = startCell;
 
-        }
+        std::vector<std::pair<std::size_t, std::size_t>> gridPath;
+        std::queue<std::pair<std::size_t, std::size_t>> cellQueue;  // Instead of TreeNode, just use the cell itself
 
+        std::vector<std::vector<bool>> visited(x0_grid, std::vector<bool>(x1_grid, false));
+
+        cellQueue.push(startCell);
+        visited[startCell.first][startCell.second] = true;
+
+        std::map<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t>> parents;
+
+            while (!cellQueue.empty()) {
+                currentCell = cellQueue.front();
+                cellQueue.pop();
+
+                if (currentCell == goalCell) {
+                    while (currentCell != startCell) {
+                        gridPath.push_back(currentCell);
+                        currentCell = parents[currentCell];
+                    }
+                    gridPath.push_back(startCell);
+                    std::reverse(gridPath.begin(), gridPath.end());
+                    return gridPath;
+                }
+
+                std::array<std::pair<int, int>, 4> directions = {{{1, 0}, {0, -1}, {-1, 0}, {0, 1}}};
+
+                for (const auto& dir : directions) {
+                    int newX = currentCell.first + dir.first;
+                    int newY = currentCell.second + dir.second;
+                    
+                    if (newX >= 0 && newX < x0_grid && newY >= 0 && newY < x1_grid && !visited[newX][newY] && !grid_cspace(newX, newY)) {
+                        visited[newX][newY] = true;
+                        cellQueue.push({newX, newY});
+                        parents[{newX, newY}] = currentCell;
+                    }
+                }
+            }
+            std::cout << "No path found!" << std::endl;
+            return gridPath;
     }
+
     
 }

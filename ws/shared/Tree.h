@@ -11,6 +11,7 @@ class Tree{
         ~Tree();
         void bfs(TreeNode* goal);
         void addEdge(TreeNode* parent, TreeNode* child);
+        void deleteTree(TreeNode* root);
 
         // fields:
         TreeNode* root;
