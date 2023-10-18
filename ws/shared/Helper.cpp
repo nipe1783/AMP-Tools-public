@@ -1,4 +1,5 @@
 #include "Helper.h"
+#include "EnvironmentHelper.h"
 #include <Eigen/Geometry> 
 
 bool Helper::isPointOnSegment(const Eigen::Vector2d &start, const Eigen::Vector2d &end, const Eigen::Vector2d &point){
@@ -272,4 +273,35 @@ bool Helper::polygonIntersect(const amp::Polygon& p1, const amp::Polygon& p2){
         return true;
     }
     return false;
+}
+
+bool Helper::inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle) {
+    bool isInside = false;
+    int numVertices = obstacle.verticesCCW().size();
+
+    for (int i = 0, j = numVertices - 1; i < numVertices; j = i++) {
+        Eigen::Vector2d vertex1 = obstacle.verticesCCW()[i];
+        Eigen::Vector2d vertex2 = obstacle.verticesCCW()[j];
+
+        if (((vertex1[1] > point[1]) != (vertex2[1] > point[1])) &&
+            (point[0] < (vertex2[0] - vertex1[0]) * (point[1] - vertex1[1]) / (vertex2[1] - vertex1[1]) + vertex1[0])) {
+            isInside = !isInside;
+        }
+    }
+
+    return isInside;
+}
+
+
+amp::Obstacle2D Helper::expandObstacle(amp::Obstacle2D obstacle, float delta) const {
+    amp::Obstacle2D enlargedObstacle;
+    std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
+    Eigen::Vector2d centroid = EnvironmentHelper().computeCentroid(vertices);
+
+    for (const Eigen::Vector2d& vertex : vertices) {
+        Eigen::Vector2d direction = (vertex - centroid).normalized(); // Get the direction from centroid to the vertex and normalize it
+        Eigen::Vector2d enlargedVertex = vertex + direction * delta;  // Expand vertex along the direction by delta
+        enlargedObstacle.verticesCCW().push_back(enlargedVertex);
+    }
+    return enlargedObstacle;
 }

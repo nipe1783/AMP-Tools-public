@@ -32,4 +32,6 @@ class Helper{
         bool polygonIntersect(const amp::Polygon& p1,const amp::Polygon& p2);
         float angle(const Eigen::Vector2d& v1,const Eigen::Vector2d& v2);
         amp::Polygon orderVertices(const amp::Polygon& polygon);
+        bool inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle);
+        amp::Obstacle2D expandObstacle(amp::Obstacle2D obstacle, float delta) const;
 };

@@ -3,6 +3,7 @@
 #include "hw/HW4.h"
 #include "MyConfigurationSpace.h"
 #include "Helper.h"
+#include "EnvironmentHelper.h"
 #include "Tree.h"
 #include "TreeNode.h"
 #include <queue>
@@ -28,38 +29,27 @@ namespace amp{
     std::unique_ptr<amp::GridCSpace2D> MyPointWaveFrontAlgorithm::constructDiscretizedWorkspace(const amp::Environment2D& environment){
         
         double grid_size = 0.25;
+        float delta = 0.1;
         double density_x0 = (environment.x_max - environment.x_min) / grid_size;
         double density_x1 = (environment.y_max - environment.y_min) / grid_size;
 
         std::unique_ptr<amp::GridCSpace2D> cSpace = std::make_unique<amp::MyConfigurationSpace>(density_x0, density_x1, environment.x_min, environment.x_max, environment.y_min, environment.y_max);
-        double x0;
-        double x1;
-        amp::Polygon robotPos;
-        Eigen::Vector2d bottomLeft;
-        Eigen::Vector2d bottomRight;
-        Eigen::Vector2d topLeft;
-        Eigen::Vector2d topRight;
-        for (int i = 0; i < density_x0; i++) {
-            for (int j = 0; j < density_x1; j++) {
-                bottomLeft = {environment.x_min + i * grid_size, environment.y_min + j * grid_size};
-                bottomRight = {environment.x_min + (i + 1) * grid_size, environment.y_min + j * grid_size};
-                topRight = {environment.x_min + (i + 1) * grid_size, environment.y_min + (j + 1) * grid_size};
-                topLeft = {environment.x_min + i * grid_size, environment.y_min + (j + 1) * grid_size};
-                // std::cout<<"bottomLeft: "<< bottomLeft[0] << ","<< bottomLeft[1] << "bottomRight: " << bottomRight[0] << ","<< bottomRight[1] << "topLeft: " << topLeft[0] << ","<< topLeft[1] << "topRight: " << topRight[0] << ","<< topRight[1] << std::endl; 
-                robotPos.verticesCCW().clear();
-                robotPos.verticesCCW().push_back(bottomLeft);
-                robotPos.verticesCCW().push_back(bottomRight);
-                robotPos.verticesCCW().push_back(topRight);
-                robotPos.verticesCCW().push_back(topLeft);
-                
-                for (auto& obstacle : environment.obstacles) {
-                    if(Helper().polygonIntersect(robotPos, obstacle)){
-                        cSpace->operator()(i, j) = true;
+        Eigen::Vector2d point;
+        amp::Obstacle2D expandedObstacle;
+        std::pair<std::size_t, std::size_t> cell;
+        for(double i = environment.x_min; i < environment.x_max; i += grid_size){
+            for(double j = environment.y_min; j < environment.y_max; j += grid_size){
+                point = {i, j};
+                for(amp::Obstacle2D obstacle : environment.obstacles){
+                    expandedObstacle = Helper().expandObstacle(obstacle, delta);
+                    if(Helper().inCollision(point, expandedObstacle)){
+                        cell = cSpace->getCellFromPoint(i, j);
+                        cSpace->operator()(cell.first, cell.second) = true;
                     }
                 }
-
             }
         }
+
         return cSpace;
     }
 

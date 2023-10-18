@@ -8,8 +8,8 @@
 #include "Helper.h"
 #include "MyConfigurationSpace.h"
 
-#include "myLinkManipulator/MyLinkManipulator.h"
-#include "myGridCSpace2DConstructor/MyGridCSpace2DConstructor.h"
+#include "MyLinkManipulator.h"
+#include "MyGridCSpace2DConstructor.h"
 
 using namespace amp;
 #include <cmath> 

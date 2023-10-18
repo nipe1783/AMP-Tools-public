@@ -27,11 +27,17 @@ namespace amp {
         return (*this)(x0_grid, x1_grid);
     }
 
-    std::pair<std::size_t, std::size_t> MyConfigurationSpace::getCellFromPoint(double x0, double x1) const{
-        int x0_grid = std::ceil((x0 - this->x0Bounds().first)/ resolution_x0) - 1;
-        int x1_grid = std::ceil((x1 - this->x1Bounds().first) / resolution_x1) - 1;
-        return std::make_pair(x0_grid, x1_grid);
+    std::pair<std::size_t, std::size_t> MyConfigurationSpace::getCellFromPoint(double x0, double x1) const {
+        int x0_grid = static_cast<int>(std::ceil((x0 - this->x0Bounds().first) / resolution_x0)) - 1;
+        int x1_grid = static_cast<int>(std::ceil((x1 - this->x1Bounds().first) / resolution_x1)) - 1;
+
+        // Check for negative results and clamp them to zero
+        if (x0_grid < 0) x0_grid = 0;
+        if (x1_grid < 0) x1_grid = 0;
+
+        return std::make_pair(static_cast<std::size_t>(x0_grid), static_cast<std::size_t>(x1_grid));
     }
+
 
     Eigen::Vector2d MyConfigurationSpace::getPointFromCell(std::size_t x0_grid, std::size_t x1_grid) const {
         double x0 = (x0_grid + 1) * resolution_x0 + this->x0Bounds().first;

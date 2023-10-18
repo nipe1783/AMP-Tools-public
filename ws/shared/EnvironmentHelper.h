@@ -44,4 +44,6 @@ class EnvironmentHelper {
          * @return Eigen::Vector2d intersection point
          **/
         static Eigen::Vector2d getIntersect(const Eigen::Vector2d &vert1, const Eigen::Vector2d &vert2, const Eigen::Vector2d &vert3, const Eigen::Vector2d &vert4);
+
+        
 };
