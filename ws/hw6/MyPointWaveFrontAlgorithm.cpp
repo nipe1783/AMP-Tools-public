@@ -3,8 +3,23 @@
 #include "hw/HW4.h"
 #include "MyConfigurationSpace.h"
 #include "Helper.h"
+#include "Tree.h"
+#include "TreeNode.h"
+#include <queue>
+#include <unordered_set>
+
 
 namespace amp{
+
+    struct pair_hash {
+        template <class T1, class T2>
+        std::size_t operator () (const std::pair<T1, T2>& p) const {
+            auto h1 = std::hash<T1>{}(p.first);
+            auto h2 = std::hash<T2>{}(p.second);
+            return h1 ^ h2;
+        }
+    };
+
 
     MyPointWaveFrontAlgorithm::MyPointWaveFrontAlgorithm(){};
 
@@ -12,7 +27,7 @@ namespace amp{
 
     std::unique_ptr<amp::GridCSpace2D> MyPointWaveFrontAlgorithm::constructDiscretizedWorkspace(const amp::Environment2D& environment){
         
-        double grid_size = 0.25;
+        double grid_size = 2;
         double density_x0 = (environment.x_max - environment.x_min) / grid_size;
         double density_x1 = (environment.y_max - environment.y_min) / grid_size;
 
@@ -50,15 +65,81 @@ namespace amp{
 
     amp::Path2D MyPointWaveFrontAlgorithm::planInCSpace(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace){
         amp::Path2D path;
+        constructTree(q_init, q_goal, grid_cspace);
+        return path;
+    }
+
+    void MyPointWaveFrontAlgorithm::constructTree(const Eigen::Vector2d& q_init, const Eigen::Vector2d& q_goal, const amp::GridCSpace2D& grid_cspace){
+        int x0_grid = grid_cspace.size().first;
+        int x1_grid = grid_cspace.size().second;
         std::pair<std::size_t, std::size_t> startCell = grid_cspace.getCellFromPoint(q_init[0], q_init[1]);
         std::pair<std::size_t, std::size_t> goalCell = grid_cspace.getCellFromPoint(q_goal[0], q_goal[1]);
         std::pair<std::size_t, std::size_t> currentCell = goalCell;
-        amp::Graph<int> graph;
-        amp::Node currNode = 2;
-        for(int i = 0; i < 10; i++){
+        std::pair<std::size_t, std::size_t> childCell;
+        std::queue<TreeNode> treeQueue;
+        std::unordered_set<std::pair<std::size_t, std::size_t>, pair_hash> visited;
+        TreeNode currentNode;
+        currentNode.cell = currentCell;
+        Tree tree;
+        tree.root = &currentNode;
+        treeQueue.push(currentNode);
+        while(!treeQueue.empty()){
             
+            currentNode = treeQueue.front();
+            currentCell = currentNode.cell;
+            treeQueue.pop();
+            // check currentCell reachable neighbors.
+            // check right:
+            childCell = std::make_pair(currentCell.first + 1, currentCell.second);
+            if(childCell.first < x0_grid && !visited.count(childCell)){
+                if(!grid_cspace(childCell.first, childCell.second)){
+                    TreeNode childNode = TreeNode();
+                    childNode.cell = childCell;
+                    childNode.parent = &currentNode;
+                    currentNode.children.push_back(&childNode);
+                    treeQueue.push(childNode);
+                    visited.insert(childNode.cell);
+                }
+            }
+            // check down:
+            childCell = std::make_pair(currentCell.first, currentCell.second - 1);
+            if(childCell.second >= 0 && !visited.count(childCell)){
+                if(!grid_cspace(childCell.first, childCell.second)){
+                    TreeNode childNode = TreeNode();
+                    childNode.cell = childCell;
+                    childNode.parent = &currentNode;
+                    currentNode.children.push_back(&childNode);
+                    treeQueue.push(childNode);
+                    visited.insert(childNode.cell);
+                }
+            }
+            // check left:
+            childCell = std::make_pair(currentCell.first - 1, currentCell.second);
+            if(childCell.first >= 0 && !visited.count(childCell)){
+                if(!grid_cspace(childCell.first, childCell.second)){
+                    TreeNode childNode = TreeNode();
+                    childNode.cell = childCell;
+                    childNode.parent = &currentNode;
+                    currentNode.children.push_back(&childNode);
+                    treeQueue.push(childNode);
+                    visited.insert(childNode.cell);
+                }
+            }
+            // check up:
+            childCell = std::make_pair(currentCell.first, currentCell.second + 1);
+            if(childCell.second < x1_grid && !visited.count(childCell)){
+                if(!grid_cspace(childCell.first, childCell.second)){
+                    TreeNode childNode = TreeNode();
+                    childNode.cell = childCell;
+                    childNode.parent = &currentNode;
+                    currentNode.children.push_back(&childNode);
+                    treeQueue.push(childNode);
+                    visited.insert(childNode.cell);
+                }
+            }
+
         }
-        return path;
+
     }
     
 }

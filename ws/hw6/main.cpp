@@ -14,14 +14,12 @@ using namespace amp;
 int main(int argc, char** argv) {
     
     // problem 1: workspace 1
-    Problem2D problem = HW2::getWorkspace2();
+    Problem2D problem = HW5::getWorkspace1();
     MyPointWaveFrontAlgorithm algo;
-    std::unique_ptr<amp::GridCSpace2D> cSpace = algo.constructDiscretizedWorkspace(problem);
     Path2D path = algo.plan(problem);
 
-    amp::Visualizer::makeFigure(*cSpace);
-    Visualizer::makeFigure(problem, path);
-    amp::Visualizer::showFigures();
+    // Visualizer::makeFigure(problem, path);
+    // amp::Visualizer::showFigures();
     // HW6::grade(algo, "nipe1783@colorado.edu", argc, argv);
 
     return 0;

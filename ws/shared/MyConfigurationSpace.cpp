@@ -28,6 +28,8 @@ namespace amp {
     }
 
     std::pair<std::size_t, std::size_t> MyConfigurationSpace::getCellFromPoint(double x0, double x1) const{
-        return std::make_pair(std::round(x0 / resolution_x0), std::round(x1 / resolution_x1));
+        int x0_grid = std::round((x0 - this->x0Bounds().first)/ resolution_x0);
+        int x1_grid = std::round((x1 - this->x1Bounds().first) / resolution_x1);
+        return std::make_pair(x0_grid, x1_grid);
     }
 }
