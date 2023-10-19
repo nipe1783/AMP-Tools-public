@@ -69,6 +69,8 @@
         "numeric": "cpp",
         "queue": "cpp",
         "unordered_set": "cpp",
-        "deque": "cpp"
+        "deque": "cpp",
+        "__string": "cpp",
+        "bitset": "cpp"
     }
 }

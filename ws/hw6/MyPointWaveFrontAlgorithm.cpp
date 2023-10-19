@@ -29,7 +29,7 @@ namespace amp{
     std::unique_ptr<amp::GridCSpace2D> MyPointWaveFrontAlgorithm::constructDiscretizedWorkspace(const amp::Environment2D& environment){
         
         double grid_size = 0.25;
-        float delta = 0.1;
+        float delta = 0.15;
         double density_x0 = (environment.x_max - environment.x_min) / grid_size;
         double density_x1 = (environment.y_max - environment.y_min) / grid_size;
 
