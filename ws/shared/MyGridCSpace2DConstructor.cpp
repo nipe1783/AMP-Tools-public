@@ -10,8 +10,8 @@ namespace amp{
 
         Eigen::Vector2d endPoint;
         Eigen::Vector2d startPoint;
-        double density_x0 = 150;
-        double density_x1 = 150;
+        double density_x0 = 100;
+        double density_x1 = 100;
         double x0_min = 0;
         double x0_max = 2*M_PI;
         double x1_min = 0;

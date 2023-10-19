@@ -116,7 +116,6 @@ namespace amp{
             if(newX >= x0_grid) newX = 0;
             if(newY < 0) newY = x1_grid - 1;
             if(newY >= x1_grid) newY = 0;
-
             // Check this neighbor and its neighbors up to n-levels deep
             if (!isCellAndNeighborsFree(newX, newY, grid_cspace, x0_grid, x1_grid, n-1)) {
                 return false;
