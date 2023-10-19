@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 
         // a:
             std::vector<double> link_lengths_a = {0.5, 1.0, 0.5};
-            std::vector<double> state_a = {M_PI / 6, M_PI / 3, 7 * M_PI / 6};
+            Eigen::Vector3d state_a = {M_PI / 6, M_PI / 3, 7 * M_PI / 6};
             MyLinkManipulator manipulator_a(link_lengths_a);
             Eigen::Vector2d jointLocation = manipulator_a.getJointLocation(state_a, 3);
             std::cout << " x: " << jointLocation[0] << " y: " << jointLocation[1] << std::endl;
@@ -72,14 +72,14 @@ int main(int argc, char** argv) {
         // b:
             std::vector<double> link_lengths_b = {1, 0.5, 1};
             MyLinkManipulator manipulator_b(link_lengths_b);
-            std::vector<double> state_b = manipulator_b.getConfigurationFromIK(Eigen::Vector2d(2,  0));
+            Eigen::Vector3d  state_b = manipulator_b.getConfigurationFromIK(Eigen::Vector2d(2,  0));
             std::cout<< "theta1: " << state_b[0] << " theta2: " << state_b[1] << " theta3: " << state_b[2] << std::endl;
             amp::Visualizer::makeFigure(manipulator_b, state_b);
             amp::Visualizer::showFigures();
 
     // 3.
         std::vector<double> link_lengths_3 = {1.0, 1.0};
-        std::vector<double> state_3 = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
+        Eigen::Vector2d state_3 = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
         amp::MyLinkManipulator manipulator_3(link_lengths_3);
         amp::MyGridCSpace2DConstructor configurationSpaceConstructor;
         // a:

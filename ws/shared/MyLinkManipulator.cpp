@@ -33,7 +33,8 @@ namespace amp{
         if(!std::isnan(s_2) && !std::isnan(c_2)){
             theta1 = atan2(end_effector_location[1], end_effector_location[0]) - atan2(getLinkLengths()[1] * s_2, getLinkLengths()[0] + getLinkLengths()[1] * c_2);
             theta2 = atan2(s_2, c_2);
-            return ManipulatorState({theta1, theta2});
+            Eigen::Vector2d vec(theta1, theta2);
+            return ManipulatorState(vec);
         }
 
         std::cout << "No solution found" << std::endl;
@@ -62,12 +63,14 @@ namespace amp{
                 theta1 = atan2(joint3location[1], joint3location[0]) - atan2(getLinkLengths()[1] * s_2, getLinkLengths()[0] + getLinkLengths()[1] * c_2);
                 theta2 = atan2(s_2, c_2);
                 theta3 = psi - theta1 - theta2;
-                return ManipulatorState({theta1, theta2, theta3});
+                Eigen::Vector3d vec(theta1, theta2, theta3);
+                return ManipulatorState(vec);
             }
 
         }
         std::cout << "No solution found" << std::endl;
-        return ManipulatorState({0, 0, 0});
+        Eigen::Vector3d vec(double(0), double(0), double(0));
+        return ManipulatorState(vec);
     }
 
     ManipulatorState MyLinkManipulator::getConfigurationFromIK(const Eigen::Vector2d& end_effector_location) const {

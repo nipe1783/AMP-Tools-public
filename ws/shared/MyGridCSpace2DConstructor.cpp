@@ -10,8 +10,8 @@ namespace amp{
 
         Eigen::Vector2d endPoint;
         Eigen::Vector2d startPoint;
-        double density_x0 = 100;
-        double density_x1 = 100;
+        double density_x0 = 150;
+        double density_x1 = 150;
         double x0_min = 0;
         double x0_max = 2*M_PI;
         double x1_min = 0;
@@ -32,7 +32,8 @@ namespace amp{
                     else{
                         startPoint = manipulator.getBaseLocation();
                     }
-                    endPoint = manipulator.getJointLocation({i, j}, k);
+                    Eigen::Vector2d vec(i, j);
+                    endPoint = manipulator.getJointLocation(vec, k);
                     if (Helper().intersects(env, startPoint, endPoint)) {
                         x0 = std::round(i / resolution_x0);
                         x1 = std::round(j / resolution_x1);

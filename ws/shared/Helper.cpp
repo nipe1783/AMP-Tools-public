@@ -117,6 +117,7 @@ bool Helper::intersects(const amp::Environment2D& environment, Eigen::Vector2d& 
     Eigen::Vector2d vert1;
     Eigen::Vector2d vert2;
     Eigen::Vector2d intersection;
+    amp::Obstacle2D expandedObstacle;
     plane1 = Eigen::Hyperplane<double,2>::Through(start, end);
     for(amp::Obstacle2D obstacle : environment.obstacles){
         std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
