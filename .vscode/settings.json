@@ -71,6 +71,7 @@
         "unordered_set": "cpp",
         "deque": "cpp",
         "__string": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "filesystem": "cpp"
     }
 }

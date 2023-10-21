@@ -13,83 +13,68 @@
 #include "MyLinkManipulator.h"
 #include "MyGridCSpace2DConstructor.h"
 #include "MyAstarAlgorithm.h"
+#include <cstdio>
 
 using namespace amp;
 
 int main(int argc, char** argv) {
     
-    // problem 1: workspace 1
-    // Problem2D problem = HW2::getWorkspace2();
+    // // problem 1: workspace 1
+    // Problem2D problem_1 = HW2::getWorkspace1();
     // MyPointWaveFrontAlgorithm algo1;
-    // Path2D path = algo1.plan(problem);
-    // std::unique_ptr<amp::GridCSpace2D> cSpace_c = algo1.constructDiscretizedWorkspace(problem);
-    // Visualizer::makeFigure(*cSpace_c);
-    // Visualizer::makeFigure(problem, path);
-    // amp::Visualizer::showFigures();
-    
-    // Random2DEnvironmentSpecification spec;
-    // spec.max_obstacle_region_radius = 1;
-    // spec.n_obstacles = 20;
-    // spec.path_clearance = 0.01;
-    // spec.d_sep = 5;
-    // //Randomly generate the environment;
-    // Problem2D problem = EnvironmentTools::generateRandomPointAgentProblem(spec, 2); // Random environment
-    // MyPointWaveFrontAlgorithm algo1;
-    // Path2D path = algo1.plan(problem);
-    // std::unique_ptr<amp::GridCSpace2D> cSpace_c = algo1.constructDiscretizedWorkspace(problem);
-    // Visualizer::makeFigure(*cSpace_c);
-    // Visualizer::makeFigure(problem, path);
-    // amp::Visualizer::showFigures();
+    // Path2D path_1 = algo1.plan(problem_1);
+    // std::unique_ptr<amp::GridCSpace2D> cSpace_1 = algo1.constructDiscretizedWorkspace(problem_1);
+    // Visualizer::makeFigure(*cSpace_1);
+    // Visualizer::makeFigure(problem_1, path_1);
 
-    // problem 2: HW 4 WS 1
-        // make robot
-        std::vector<double> link_lengths = {1.0, 1.0};
-        Eigen::Vector2d state = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
-        amp::MyLinkManipulator manipulator(link_lengths);
-        ManipulatorState q_init = manipulator.getConfigurationFromIK(Eigen::Vector2d(-2, 0));
-        ManipulatorState q_goal = manipulator.getConfigurationFromIK(Eigen::Vector2d(2, 0));
-        MyManipulatorWaveFrontAlgorithm algo2;
-        amp::MyGridCSpace2DConstructor configurationSpaceConstructor;
+    // Problem2D problem_2 = HW2::getWorkspace2();
+    // Path2D path_2 = algo1.plan(problem_2);
+    // std::unique_ptr<amp::GridCSpace2D> cSpace_2 = algo1.constructDiscretizedWorkspace(problem_2);
+    // Visualizer::makeFigure(*cSpace_2);
+    // Visualizer::makeFigure(problem_2, path_2);
 
-        // env a:
-            amp::Problem2D problem_a = HW6::getHW4Problem1();
-            std::unique_ptr<amp::GridCSpace2D> grid_a = configurationSpaceConstructor.construct(manipulator, problem_a);
-            amp::Path2D path_a = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_a);
-            amp::Visualizer::makeFigure(*grid_a, path_a);
-            amp::Visualizer::makeFigure(problem_a, manipulator, path_a);
+    // // problem 2: HW 4 WS 1
+    //     // make robot
+    //     std::vector<double> link_lengths = {1.0, 1.0};
+    //     Eigen::Vector2d state = {0.4 * 2 *M_PI, 0.8 * 2 *M_PI};
+    //     amp::MyLinkManipulator manipulator(link_lengths);
+    //     ManipulatorState q_init = manipulator.getConfigurationFromIK(Eigen::Vector2d(-2, 0));
+    //     ManipulatorState q_goal = manipulator.getConfigurationFromIK(Eigen::Vector2d(2, 0));
+    //     MyManipulatorWaveFrontAlgorithm algo2;
+    //     amp::MyGridCSpace2DConstructor configurationSpaceConstructor;
 
-        // env b:
-            amp::Problem2D problem_b = HW6::getHW4Problem2();
-            std::unique_ptr<amp::GridCSpace2D> grid_b = configurationSpaceConstructor.construct(manipulator, problem_b);
-            amp::Path2D path_b = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_b);
-            amp::Visualizer::makeFigure(*grid_b, path_b);
-            amp::Visualizer::makeFigure(problem_b, manipulator, path_b);
+    //     // env a:
+    //         amp::Problem2D problem_a = HW6::getHW4Problem1();
+    //         std::unique_ptr<amp::GridCSpace2D> grid_a = configurationSpaceConstructor.construct(manipulator, problem_a);
+    //         amp::Path2D path_a = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_a);
+    //         amp::Visualizer::makeFigure(*grid_a, path_a);
+    //         amp::Visualizer::makeFigure(problem_a, manipulator, path_a);
 
-        // env c:
-            // planner env c:
-            amp::Problem2D problem_c = HW6::getHW4Problem3();
-            std::unique_ptr<amp::GridCSpace2D> grid_c = configurationSpaceConstructor.construct(manipulator, problem_c);
-            amp::Path2D path_c = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_c);
-            amp::Visualizer::makeFigure(*grid_c, path_c);
-            amp::Visualizer::makeFigure(problem_c, manipulator, path_c);
+    //     // env b:
+    //         amp::Problem2D problem_b = HW6::getHW4Problem2();
+    //         std::unique_ptr<amp::GridCSpace2D> grid_b = configurationSpaceConstructor.construct(manipulator, problem_b);
+    //         amp::Path2D path_b = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_b);
+    //         amp::Visualizer::makeFigure(*grid_b, path_b);
+    //         amp::Visualizer::makeFigure(problem_b, manipulator, path_b);
 
-        bool prob_2_a = HW6::checkLinkManipulatorPlan(path_a, manipulator, problem_a);
-        std::cout<<"Problem 2 a: "<<prob_2_a<<std::endl;
-        bool prob_2_b = HW6::checkLinkManipulatorPlan(path_b, manipulator, problem_b);
-        std::cout<<"Problem 2 b: "<<prob_2_b<<std::endl;
-        bool prob_2_c = HW6::checkLinkManipulatorPlan(path_c, manipulator, problem_c);
-        std::cout<<"Problem 2 c: "<<prob_2_c<<std::endl;
+    //     // env c:
+    //         // planner env c:
+    //         amp::Problem2D problem_c = HW6::getHW4Problem3();
+    //         std::unique_ptr<amp::GridCSpace2D> grid_c = configurationSpaceConstructor.construct(manipulator, problem_c);
+    //         amp::Path2D path_c = algo2.planInCSpace(Eigen::Vector2d(q_init[0], q_init[1]), Eigen::Vector2d(q_goal[0], q_goal[1]), *grid_c);
+    //         amp::Visualizer::makeFigure(*grid_c, path_c);
+    //         amp::Visualizer::makeFigure(problem_c, manipulator, path_c);
 
-    // prob 3
-        // MyAStarAlgorithm algo3;
-        // amp::ShortestPathProblem problem = HW6::getEx3SPP();
-        // amp::LookupSearchHeuristic heuristic = HW6::getEx3Heuristic();
-        // AStar::GraphSearchResult result = algo3.search(problem, heuristic);
-        // bool prob_3 = HW6::checkGraphSearchResult(result, problem, heuristic);
+    // // prob 3
+    //     MyAStarAlgorithm algo3;
+    //     amp::ShortestPathProblem problem3 = HW6::getEx3SPP();
+    //     amp::LookupSearchHeuristic heuristic = HW6::getEx3Heuristic();
+    //     AStar::GraphSearchResult result = algo3.search(problem3, heuristic);
+        // bool prob_3 = HW6::checkGraphSearchResult(result, problem3, heuristic);
         // bool prob_3_test = HW6::generateAndCheck(algo3, true, 1);
 
 
-    amp::Visualizer::showFigures();
+    // amp::Visualizer::showFigures();
     // amp::HW6::grade<MyPointWaveFrontAlgorithm, MyManipulatorWaveFrontAlgorithm, MyAStarAlgorithm>("nipe1783@colorado.edu", argc, argv, std::make_tuple(), std::make_tuple("hey therre"), std::make_tuple());
     return 0;
 }

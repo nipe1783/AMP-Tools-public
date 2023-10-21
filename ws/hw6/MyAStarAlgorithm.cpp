@@ -14,7 +14,7 @@ namespace amp {
         Node currNode, childNode;
         double currCost, childCost;
         std::pair<Node, double> currPair;
-        std::unordered_map<Node, Node> parentMap;  // For tracking path
+        std::unordered_map<Node, Node> parentMap;
         
         auto compare = [](const std::pair<Node, double>& lhs, const std::pair<Node, double>& rhs) {
             return lhs.second > rhs.second;
@@ -23,14 +23,15 @@ namespace amp {
         std::priority_queue<std::pair<Node, double>, std::vector<std::pair<Node, double>>, decltype(compare)> priorityQueue(compare);
         std::unordered_map<Node, double> nodeCosts; 
         
-        priorityQueue.push(std::make_pair(problem.init_node, heuristic(problem.init_node))); // Corrected this line
+        priorityQueue.push(std::make_pair(problem.init_node, heuristic(problem.init_node)));
         nodeCosts[problem.init_node] = 0;
-
+        int counter = 0;
         while(!priorityQueue.empty()) {
+            counter += 1;
             currPair = priorityQueue.top();
             priorityQueue.pop();
             currNode = currPair.first;
-            currCost = nodeCosts[currNode];  // Using actual cost from map
+            currCost = nodeCosts[currNode];
 
             if(currNode == problem.goal_node) {
                 result.success = true;

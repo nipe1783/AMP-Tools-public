@@ -21,25 +21,36 @@ namespace amp{
     }
 
     ManipulatorState MyLinkManipulator::getConfigurationFromIK2Link(const Eigen::Vector2d& end_effector_location) const {
-        double theta2;
-        double theta1;
-        double c_2;
-        double s_2;
-
+        double theta2_1, theta2_2; // two possible solutions for theta2
+        double theta1_1, theta1_2; // corresponding solutions for theta1
+        double c_2, s_2_1, s_2_2;
         c_2 = (pow(end_effector_location[0], 2) + pow(end_effector_location[1], 2) - pow(getLinkLengths()[0], 2) - pow(getLinkLengths()[1], 2)) / (2 * getLinkLengths()[0] * getLinkLengths()[1]);
-        s_2 = sqrt(1 - pow(c_2, 2));
 
-        // check if goal location is reachable
-        if(!std::isnan(s_2) && !std::isnan(c_2)){
-            theta1 = atan2(end_effector_location[1], end_effector_location[0]) - atan2(getLinkLengths()[1] * s_2, getLinkLengths()[0] + getLinkLengths()[1] * c_2);
-            theta2 = atan2(s_2, c_2);
-            Eigen::Vector2d vec(theta1, theta2);
-            return ManipulatorState(vec);
+        s_2_1 = sqrt(1 - pow(c_2, 2));
+        s_2_2 = -s_2_1; // The negative square root
+
+        std::vector<ManipulatorState> solutions;
+
+        if (!std::isnan(s_2_1) && !std::isnan(c_2)) {
+            theta1_1 = atan2(end_effector_location[1], end_effector_location[0]) - atan2(getLinkLengths()[1] * s_2_1, getLinkLengths()[0] + getLinkLengths()[1] * c_2);
+            theta2_1 = atan2(s_2_1, c_2);
+            solutions.push_back(ManipulatorState(Eigen::Vector2d(theta1_1, theta2_1)));
         }
 
-        std::cout << "No solution found" << std::endl;
-        return ManipulatorState({0, 0});
+        if (!std::isnan(s_2_2) && !std::isnan(c_2)) {
+            theta1_2 = atan2(end_effector_location[1], end_effector_location[0]) + atan2(getLinkLengths()[1] * s_2_2, getLinkLengths()[0] + getLinkLengths()[1] * c_2);
+            theta2_2 = atan2(s_2_2, c_2);
+            solutions.push_back(ManipulatorState(Eigen::Vector2d(theta1_2, theta2_2)));
+        }
+
+        if (solutions.empty()) {
+            std::cout << "No solution found" << std::endl;
+        }
+
+        // This assumes you always want the second solution. You may want to change this behavior.
+        return solutions[0];
     }
+
 
     ManipulatorState MyLinkManipulator::getConfigurationFromIK3Link(const Eigen::Vector2d& end_effector_location) const {
         double theta3;
@@ -74,6 +85,7 @@ namespace amp{
     }
 
     ManipulatorState MyLinkManipulator::getConfigurationFromIK(const Eigen::Vector2d& end_effector_location) const {
+        std::cout << "getConfigurationFromIK" << std::endl;
         if(getLinkLengths().size() == 3){
             return getConfigurationFromIK3Link(end_effector_location);
         }

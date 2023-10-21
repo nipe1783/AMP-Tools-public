@@ -80,12 +80,19 @@ class ManipulatorWaveFrontAlgorithm : public WaveFrontAlgorithm, public LinkMani
             // Get the goal state from IK
             amp::ManipulatorState goal_state = link_manipulator_agent.getConfigurationFromIK(problem.q_goal);
 
+            std::cout<<"init state: "<<init_state[0]<<", "<<init_state[1]<<std::endl;
+            std::cout<<"goal state: "<<goal_state[0]<<", "<<goal_state[1]<<std::endl;
+            
             // Construct the grid cspace
             std::unique_ptr<amp::GridCSpace2D> grid_cspace = m_c_space_constructor->construct(link_manipulator_agent, problem);
 
             // Now that we have everything, we can call method to plan in C-space using the WaveFront algorithm
             // Note, we can use the `convert` overloads to easily go between ManipulatorState and ManipulatorState2Link
-            return planInCSpace(convert(init_state), convert(goal_state), *grid_cspace);
+            amp::Path2D plan = planInCSpace(convert(init_state), convert(goal_state), *grid_cspace);
+            amp::Visualizer::makeFigure(*grid_cspace, plan);
+            amp::Visualizer::makeFigure(problem, link_manipulator_agent, plan);
+            amp::Visualizer::showFigures();
+            return plan;
         }
 
         virtual ~ManipulatorWaveFrontAlgorithm() {}
