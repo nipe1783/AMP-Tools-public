@@ -72,8 +72,6 @@ namespace amp{
 
         std::pair<std::size_t, std::size_t> startCell = grid_cspace.getCellFromPoint(q_init[0], q_init[1]);
         std::pair<std::size_t, std::size_t> goalCell = grid_cspace.getCellFromPoint(q_goal[0], q_goal[1]);
-        std::cout<<"Start cell: "<<startCell.first<<", "<<startCell.second<<std::endl;
-        std::cout<<"Goal cell: "<<goalCell.first<<", "<<goalCell.second<<std::endl;
 
         std::pair<std::size_t, std::size_t> currentCell = startCell;
 
@@ -116,9 +114,7 @@ namespace amp{
                     if(newY >= x1_grid){
                         newY = 0;
                     }
-                    // std::cout<<"New cell: "<<newX<<", "<<newY<<std::endl;
                     if(newX == goalCell.first && newY == goalCell.second){
-                        std::cout<<"Goal cell found!: "<<newX<<", "<<newY<<std::endl;
                         visited[newX][newY] = true;
                         cellQueue.push({newX, newY});
                         parents[{newX, newY}] = currentCell;

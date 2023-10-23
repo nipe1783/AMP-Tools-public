@@ -70,11 +70,11 @@ int main(int argc, char** argv) {
     //     amp::ShortestPathProblem problem3 = HW6::getEx3SPP();
     //     amp::LookupSearchHeuristic heuristic = HW6::getEx3Heuristic();
     //     AStar::GraphSearchResult result = algo3.search(problem3, heuristic);
-        // bool prob_3 = HW6::checkGraphSearchResult(result, problem3, heuristic);
-        // bool prob_3_test = HW6::generateAndCheck(algo3, true, 1);
+    //     bool prob_3 = HW6::checkGraphSearchResult(result, problem3, heuristic);
+    //     bool prob_3_test = HW6::generateAndCheck(algo3, true, 1);
 
 
     // amp::Visualizer::showFigures();
-    // amp::HW6::grade<MyPointWaveFrontAlgorithm, MyManipulatorWaveFrontAlgorithm, MyAStarAlgorithm>("nipe1783@colorado.edu", argc, argv, std::make_tuple(), std::make_tuple("hey therre"), std::make_tuple());
+    amp::HW6::grade<MyPointWaveFrontAlgorithm, MyManipulatorWaveFrontAlgorithm, MyAStarAlgorithm>("nipe1783@colorado.edu", argc, argv, std::make_tuple(), std::make_tuple("hey therre"), std::make_tuple());
     return 0;
 }
