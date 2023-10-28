@@ -1,6 +1,9 @@
 #include "Helper.h"
 #include "EnvironmentHelper.h"
 #include <Eigen/Geometry> 
+#include <iostream>
+#include <vector>
+#include <numeric>
 
 bool Helper::isPointOnSegment(const Eigen::Vector2d &start, const Eigen::Vector2d &end, const Eigen::Vector2d &point){
     Eigen::Hyperplane<double, 2> line = Eigen::Hyperplane<double, 2>::Through(start, end);
@@ -305,4 +308,11 @@ amp::Obstacle2D Helper::expandObstacle(amp::Obstacle2D obstacle, float delta) co
         enlargedObstacle.verticesCCW().push_back(enlargedVertex);
     }
     return enlargedObstacle;
+}
+
+
+double Helper::average(const std::vector<double>& v) {
+    if (v.empty()) return 0.0;
+    double sum = std::accumulate(v.begin(), v.end(), 0.0);
+    return sum / v.size();
 }

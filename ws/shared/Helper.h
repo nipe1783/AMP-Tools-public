@@ -34,4 +34,5 @@ class Helper{
         amp::Polygon orderVertices(const amp::Polygon& polygon);
         bool inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle);
         amp::Obstacle2D expandObstacle(amp::Obstacle2D obstacle, float delta) const;
+        double average(const std::vector<double>& v);
 };

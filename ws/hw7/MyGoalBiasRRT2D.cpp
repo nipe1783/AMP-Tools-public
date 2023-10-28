@@ -1,7 +1,7 @@
 #include "AMPCore.h"
 #include "hw/HW7.h"
 #include "hw/HW6.h"
-#include "MyPRM2D.h"
+#include "MyGoalBiasedPRM2D.h"
 #include "EnvironmentHelper.h"
 #include "Helper.h"
 #include "MyAstarAlgorithm.h"
@@ -12,7 +12,7 @@
 
 namespace amp{
     
-    Path2D MyPRM2D::plan(const Problem2D& prob){
+    Path2D MyGoalBiasedPRM2D::plan(const Problem2D& prob){
 
         // start timer:
         auto start_time = std::chrono::high_resolution_clock::now();
@@ -56,7 +56,7 @@ namespace amp{
         return path;
     }
 
-    std::tuple<Path2D, double, double> MyPRM2D::plan(const Problem2D& prob, const double r, const int n, bool smooth){
+    std::tuple<Path2D, double, double> MyGoalBiasedPRM2D::plan(const Problem2D& prob, const double r, const int n, bool smooth){
 
         // start timer:
         auto start_time = std::chrono::high_resolution_clock::now();
@@ -104,7 +104,7 @@ namespace amp{
         return std::make_tuple(path, distance, duration.count());
     }
 
-    void MyPRM2D::sampleWorkSpace(const Problem2D& prob, int num_samples, std::vector<Eigen::Vector2d>& nodes){
+    void MyGoalBiasedPRM2D::sampleWorkSpace(const Problem2D& prob, int num_samples, std::vector<Eigen::Vector2d>& nodes){
         double xmin = prob.x_min;
         double xmax = prob.x_max;
         double ymin = prob.y_min;
@@ -132,7 +132,7 @@ namespace amp{
         }
     }
 
-    void MyPRM2D::linkNearestNodes(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const Problem2D& prob){
+    void MyGoalBiasedPRM2D::linkNearestNodes(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const Problem2D& prob){
         double distance;
         heuristic.heuristic_values[node_idx] = calculateHeuristic(prob, nodes[node_idx]);
         for(int i = 0; i < node_idx; i++){
@@ -153,12 +153,12 @@ namespace amp{
         }
     }
 
-    double MyPRM2D::calculateHeuristic(const Problem2D& prob, const Eigen::Vector2d& node){
+    double MyGoalBiasedPRM2D::calculateHeuristic(const Problem2D& prob, const Eigen::Vector2d& node){
         double distance = (node - prob.q_goal).norm();
         return distance;
     }
 
-    void MyPRM2D::smoothPath(int iterations, std::vector<Eigen::Vector2d>& nodes, const Problem2D& prob){
+    void MyGoalBiasedPRM2D::smoothPath(int iterations, std::vector<Eigen::Vector2d>& nodes, const Problem2D& prob){
         for(int i = 0; i < iterations; i++){
             // Randomly select two distinct node indices
             int node1_idx = rand() % nodes.size();
@@ -182,8 +182,5 @@ namespace amp{
             }
         }
     }
-
-
-
 
 }

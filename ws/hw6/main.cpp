@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     // // prob 3
     //     MyAStarAlgorithm algo3;
     //     amp::ShortestPathProblem problem3 = HW6::getEx3SPP();
-    //     amp::LookupSearchHeuristic heuristic = HW6::getEx3Heuristic();
+        // amp::LookupSearchHeuristic heuristic = HW6::getEx3Heuristic();
     //     AStar::GraphSearchResult result = algo3.search(problem3, heuristic);
     //     bool prob_3 = HW6::checkGraphSearchResult(result, problem3, heuristic);
     //     bool prob_3_test = HW6::generateAndCheck(algo3, true, 1);

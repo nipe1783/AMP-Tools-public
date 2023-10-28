@@ -11,8 +11,8 @@
 namespace amp {
     AStar::GraphSearchResult MyAStarAlgorithm::search(const ShortestPathProblem& problem, const SearchHeuristic& heuristic) {
         GraphSearchResult result;
-        Node currNode, childNode;
-        double currCost, childCost;
+        Node currNode, neighborNode;
+        double currCost, neighborCost;
         std::pair<Node, double> currPair;
         std::unordered_map<Node, Node> parentMap;
         
@@ -25,9 +25,8 @@ namespace amp {
         
         priorityQueue.push(std::make_pair(problem.init_node, heuristic(problem.init_node)));
         nodeCosts[problem.init_node] = 0;
-        int counter = 0;
+
         while(!priorityQueue.empty()) {
-            counter += 1;
             currPair = priorityQueue.top();
             priorityQueue.pop();
             currNode = currPair.first;
@@ -35,7 +34,6 @@ namespace amp {
 
             if(currNode == problem.goal_node) {
                 result.success = true;
-                // Construct path
                 while(currNode != problem.init_node) {
                     result.node_path.push_back(currNode);
                     currNode = parentMap[currNode];
@@ -46,13 +44,29 @@ namespace amp {
                 return result;
             }
 
-            for(int i = 0; i < problem.graph->children(currNode).size(); i++) {
-                childNode = problem.graph->children(currNode)[i];
-                childCost = currCost + problem.graph->outgoingEdges(currNode)[i];
-                if(nodeCosts.find(childNode) == nodeCosts.end() || childCost < nodeCosts[childNode]) {
-                    nodeCosts[childNode] = childCost;
-                    priorityQueue.push(std::make_pair(childNode, nodeCosts[childNode] + heuristic(childNode)));
-                    parentMap[childNode] = currNode;
+            // Process children
+            auto childNodes = problem.graph->children(currNode);
+            auto childEdges = problem.graph->outgoingEdges(currNode);
+            for(int i = 0; i < childNodes.size(); i++) {
+                neighborNode = childNodes[i];
+                neighborCost = currCost + childEdges[i];
+                if(nodeCosts.find(neighborNode) == nodeCosts.end() || neighborCost < nodeCosts[neighborNode]) {
+                    nodeCosts[neighborNode] = neighborCost;
+                    priorityQueue.push(std::make_pair(neighborNode, nodeCosts[neighborNode] + heuristic(neighborNode)));
+                    parentMap[neighborNode] = currNode;
+                }
+            }
+
+            // Process parents
+            auto parentNodes = problem.graph->parents(currNode);
+            auto parentEdges = problem.graph->incomingEdges(currNode);
+            for(int i = 0; i < parentNodes.size(); i++) {
+                neighborNode = parentNodes[i];
+                neighborCost = currCost + parentEdges[i];
+                if(nodeCosts.find(neighborNode) == nodeCosts.end() || neighborCost < nodeCosts[neighborNode]) {
+                    nodeCosts[neighborNode] = neighborCost;
+                    priorityQueue.push(std::make_pair(neighborNode, nodeCosts[neighborNode] + heuristic(neighborNode)));
+                    parentMap[neighborNode] = currNode;
                 }
             }
         }

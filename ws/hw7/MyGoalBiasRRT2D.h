@@ -4,7 +4,7 @@
 #include "hw/HW6.h"
 
 namespace amp {
-    class MyPRM2D : public amp::PRM2D {
+    class MyGoalBiasRRT2D : public amp::GoalBiasRRT2D {
         public:
             /**
              * @brief Plan a path from the start to the goal.
