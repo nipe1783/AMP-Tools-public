@@ -3,6 +3,7 @@
 #include <cmath>
 #include <Eigen/Geometry>
 #include "AMPCore.h"
+#include "MyConfigurationSpace.h"
 
 Eigen::Vector2d EnvironmentHelper::obstacleRefPoint(const amp::Obstacle2D &obstacle, Eigen::Vector2d &pos){
     Eigen::Vector2d refPoint;
@@ -51,3 +52,45 @@ Eigen::Vector2d EnvironmentHelper::getIntersect(const Eigen::Vector2d &vert1, co
     Eigen::Vector2d intersection = plane1.intersection(plane2);
     return intersection;
 };
+
+ std::unique_ptr<amp::GridCSpace2D> EnvironmentHelper::constructCSpacePRB(const amp::Environment2D& environment, double grid_size, float delta){
+        
+        double density_x0 = (environment.x_max - environment.x_min) / grid_size;
+        double density_x1 = (environment.y_max - environment.y_min) / grid_size;
+
+        std::unique_ptr<amp::GridCSpace2D> cSpace = std::make_unique<amp::MyConfigurationSpace>(density_x0, density_x1, environment.x_min, environment.x_max, environment.y_min, environment.y_max);
+        Eigen::Vector2d point;
+        amp::Obstacle2D expandedObstacle;
+        std::pair<std::size_t, std::size_t> cell;
+        for(double i = environment.x_min; i < environment.x_max; i += grid_size){
+            for(double j = environment.y_min; j < environment.y_max; j += grid_size){
+                point = {i, j};
+                for(amp::Obstacle2D obstacle : environment.obstacles){
+                    expandedObstacle = Helper().expandObstacle(obstacle, delta);
+                    if(Helper().inCollision(point, expandedObstacle)){
+                        cell = cSpace->getCellFromPoint(i, j);
+                        cSpace->operator()(cell.first, cell.second) = true;
+                    }
+                }
+            }
+        }
+
+        return cSpace;
+ };
+
+bool EnvironmentHelper::inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle) {
+    bool isInside = false;
+    int numVertices = obstacle.verticesCCW().size();
+
+    for (int i = 0, j = numVertices - 1; i < numVertices; j = i++) {
+        Eigen::Vector2d vertex1 = obstacle.verticesCCW()[i];
+        Eigen::Vector2d vertex2 = obstacle.verticesCCW()[j];
+
+        if (((vertex1[1] > point[1]) != (vertex2[1] > point[1])) &&
+            (point[0] < (vertex2[0] - vertex1[0]) * (point[1] - vertex1[1]) / (vertex2[1] - vertex1[1]) + vertex1[0])) {
+            isInside = !isInside;
+        }
+    }
+
+    return isInside;
+}

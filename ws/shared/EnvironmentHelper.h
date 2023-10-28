@@ -45,5 +45,23 @@ class EnvironmentHelper {
          **/
         static Eigen::Vector2d getIntersect(const Eigen::Vector2d &vert1, const Eigen::Vector2d &vert2, const Eigen::Vector2d &vert3, const Eigen::Vector2d &vert4);
 
+
+        /**
+         * @brief Creates discretized cspace for point robot.
+         * 
+         * @param environment robot environment
+         * @param grid_size step size in cspace
+         * @param delta padding on obstacles
+         * @return returnType Description of return value
+         **/
+        std::unique_ptr<amp::GridCSpace2D> constructCSpacePRB(const amp::Environment2D& environment, double grid_size, float delta);
+
+        /**
+         * @brief Returns true if point is in obstacle.
+         * 
+         * @param point point to check
+         * @return true if point is in obstacle
+         **/
+        bool inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle);
         
 };
