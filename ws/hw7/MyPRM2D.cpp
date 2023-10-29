@@ -18,13 +18,12 @@ namespace amp{
         auto start_time = std::chrono::high_resolution_clock::now();
 
         // constants:
-        const double r = 2;
+        const double r = 1.5;
         const int n = 500;
 
         Path2D path;
 
         // step 1: construct cspace and create graph
-        // std::unique_ptr<amp::GridCSpace2D> grid_cspace  = EnvironmentHelper().constructCSpacePRB(prob, 0.25, 0.15);
         amp::Graph<double> graph;
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::Vector2d> nodes;
@@ -50,7 +49,7 @@ namespace amp{
         // end timer:
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        std::cout << "Plan function took: " << duration.count() << " milliseconds" << std::endl;
+        std::cout << "Plan function took!: " << duration.count() << " milliseconds" << std::endl;
 
         
         return path;
