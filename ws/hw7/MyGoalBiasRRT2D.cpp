@@ -1,7 +1,7 @@
 #include "AMPCore.h"
 #include "hw/HW7.h"
 #include "hw/HW6.h"
-#include "MyGoalBiasedPRM2D.h"
+#include "MyGoalBiasRRT2D.h"
 #include "EnvironmentHelper.h"
 #include "Helper.h"
 #include "MyAstarAlgorithm.h"
@@ -12,153 +12,186 @@
 
 namespace amp{
     
-    Path2D MyGoalBiasedPRM2D::plan(const Problem2D& prob){
+    const unsigned int MAX_ITERATIONS = 10000;
 
+    Path2D MyGoalBiasRRT2D::plan(const Problem2D& prob){
+    
         // start timer:
         auto start_time = std::chrono::high_resolution_clock::now();
 
         // constants:
-        const double r = 2;
-        const int n = 500;
+        const double r = 0.5;
+        const double p = 0.05;
+        const double threshold = 0.25;
+        const int n = 5000;
+        int counter = 0;
+        int sample_idx;
+        int nearest_idx;
+        double distance;
 
         Path2D path;
 
         // step 1: construct cspace and create graph
-        // std::unique_ptr<amp::GridCSpace2D> grid_cspace  = EnvironmentHelper().constructCSpacePRB(prob, 0.25, 0.15);
         amp::Graph<double> graph;
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::Vector2d> nodes;
         nodes.push_back(prob.q_init);
-        nodes.push_back(prob.q_goal);
+        heuristic.heuristic_values[0] = calculateHeuristic(prob, nodes[0]);
 
-        // step 2: sample cspace
-        sampleWorkSpace(prob, n, nodes);
+        while(counter < n){
+            counter++;
+            // step 2: sample workspace with random sample
+            sample_idx = generateRandomSample(prob, nodes, p, r);
 
-        // step 3: connect nodes and remove invalid nodes
-        for(int i = 0; i < nodes.size(); i++){
-            linkNearestNodes(i, nodes, r, graph, heuristic, prob);
+            // step 3: find nearest node
+            nearest_idx = findNearestNode(sample_idx, nodes, r, prob);
+
+            // step 4: check if the path between the nearest node and the sample is valid
+            if(!Helper().intersects(prob, nodes[nearest_idx], nodes[sample_idx])){
+                // step 5: add edge to graph
+                distance = (nodes[nearest_idx] - nodes[sample_idx]).norm();
+                graph.connect(nearest_idx, sample_idx, distance);
+                heuristic.heuristic_values[sample_idx] = calculateHeuristic(prob, nodes[sample_idx]);
+                
+                // step 6: check if sampled idx close enough to the goal
+                if((nodes[sample_idx] - prob.q_goal).norm() < threshold){
+                    nodes.push_back(prob.q_goal);
+                    graph.connect(sample_idx, nodes.size() - 1, (nodes[sample_idx] - nodes[nodes.size() - 1]).norm());
+                    heuristic.heuristic_values[nodes.size() - 1] = calculateHeuristic(prob, nodes[nodes.size() - 1]);
+                    MyAStarAlgorithm aStar;
+                    amp::ShortestPathProblem prob_astar = {std::make_unique<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nodes.size() - 1)};
+                    AStar::GraphSearchResult result = aStar.search(prob_astar, heuristic);
+                    for(const auto& node : result.node_path) {
+                        path.waypoints.push_back(nodes[node]);
+                    }
+                    return path;
+                }
+            }
+
         }
-
-        // step 4: find shortest from graph
-        MyAStarAlgorithm aStar;
-        amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, 1};
-        AStar::GraphSearchResult result = aStar.search(prob_astar, heuristic);
-        for(const auto& node : result.node_path) {
-            path.waypoints.push_back(nodes[node]);
-        }
-
-        // end timer:
-        auto end_time = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        std::cout << "Plan function took: " << duration.count() << " milliseconds" << std::endl;
-
-        
+        std::cout<<"Path not found"<<std::endl;
         return path;
     }
 
-    std::tuple<Path2D, double, double> MyGoalBiasedPRM2D::plan(const Problem2D& prob, const double r, const int n, bool smooth){
 
-        // start timer:
+    std::tuple<Path2D, double, double> MyGoalBiasRRT2D::plan(const Problem2D& prob, const double r, const int n, const double p, const double threshold, bool smooth){
+       
+       // start timer:
         auto start_time = std::chrono::high_resolution_clock::now();
+
+        // constants:
+        int counter = 0;
+        int sample_idx;
+        int nearest_idx;
+        double distance;
 
         Path2D path;
 
         // step 1: construct cspace and create graph
-        // std::unique_ptr<amp::GridCSpace2D> grid_cspace  = EnvironmentHelper().constructCSpacePRB(prob, 0.25, 0.15);
         amp::Graph<double> graph;
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::Vector2d> nodes;
         nodes.push_back(prob.q_init);
-        nodes.push_back(prob.q_goal);
+        heuristic.heuristic_values[0] = calculateHeuristic(prob, nodes[0]);
 
-        // step 2: sample cspace
-        sampleWorkSpace(prob, n, nodes);
-        std::cout<<"nodes size: "<<nodes.size()<<std::endl;
+        while(counter < n){
+            counter++;
+            // step 2: sample workspace with random sample
+            sample_idx = generateRandomSample(prob, nodes, p, r);
 
-        // step 3: connect nodes and remove invalid nodes
-        for(int i = 0; i < nodes.size(); i++){
-            linkNearestNodes(i, nodes, r, graph, heuristic, prob);
-        }
+            // step 3: find nearest node
+            nearest_idx = findNearestNode(sample_idx, nodes, r, prob);
 
-        // step 4: find shortest from graph
-        double distance = 0;
-        MyAStarAlgorithm aStar;
-        amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, 1};
-        std::cout<<heuristic.heuristic_values.size()<<std::endl;
-        AStar::GraphSearchResult result = aStar.search(prob_astar, heuristic);
-        for(const auto& node : result.node_path) {
-            path.waypoints.push_back(nodes[node]);
-            if(node > 0){
-                distance += (nodes[node - 1] - nodes[node]).norm();
+            // step 4: check if the path between the nearest node and the sample is valid
+            if(!Helper().intersects(prob, nodes[nearest_idx], nodes[sample_idx])){
+                // step 5: add edge to graph
+                distance = (nodes[nearest_idx] - nodes[sample_idx]).norm();
+                graph.connect(nearest_idx, sample_idx, distance);
+                heuristic.heuristic_values[sample_idx] = calculateHeuristic(prob, nodes[sample_idx]);
+                
+                // step 6: check if sampled idx close enough to the goal
+                if((nodes[sample_idx] - prob.q_goal).norm() < threshold){
+                    nodes.push_back(prob.q_goal);
+                    graph.connect(sample_idx, nodes.size() - 1, (nodes[sample_idx] - nodes[nodes.size() - 1]).norm());
+                    heuristic.heuristic_values[nodes.size() - 1] = calculateHeuristic(prob, nodes[nodes.size() - 1]);
+                    MyAStarAlgorithm aStar;
+                    amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nodes.size() - 1)};
+                    AStar::GraphSearchResult result = aStar.search(prob_astar, heuristic);
+                    distance = 0;
+                    for(const auto& node : result.node_path) {
+                        path.waypoints.push_back(nodes[node]);
+                        if(node > 0){
+                            distance += (nodes[node - 1] - nodes[node]).norm();
+                        }
+                    }
+                    auto end_time = std::chrono::high_resolution_clock::now();
+                    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+                    return std::make_tuple(path, distance, duration.count());
+                }
             }
-        }
-        if(smooth){
-            smoothPath(100, path.waypoints, prob);
-        }
+            else{
+                nodes.pop_back();
+            }
 
-        // end timer:
+        }
+        std::cout<<"Path not found"<<std::endl;
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        std::cout << "Plan function took: " << duration.count() << " milliseconds" << std::endl;
-
-        return std::make_tuple(path, distance, duration.count());
+        return std::make_tuple(path, 0, duration.count());
     }
 
-    void MyGoalBiasedPRM2D::sampleWorkSpace(const Problem2D& prob, int num_samples, std::vector<Eigen::Vector2d>& nodes){
-        double xmin = prob.x_min;
-        double xmax = prob.x_max;
-        double ymin = prob.y_min;
-        double ymax = prob.y_max;
-        double x;
-        double y;
-        bool in_collision = false;
-        std::random_device rd;
-        std::default_random_engine generator(rd());
-        std::uniform_real_distribution<double> distribution_x(xmin, xmax);
-        std::uniform_real_distribution<double> distribution_y(ymin, ymax);
-        for (int i = 0; i < num_samples; i++){
+    int MyGoalBiasRRT2D::generateRandomSample(const Problem2D& prob, std::vector<Eigen::Vector2d>& nodes, const double p, const double r) {
+        static std::random_device rd;  // static to ensure it's initialized once
+        static std::default_random_engine generator(rd());  // same for the generator
+        static std::uniform_real_distribution<double> distribution_x(prob.x_min, prob.x_max);
+        static std::uniform_real_distribution<double> distribution_y(prob.y_min, prob.y_max);
+        static std::uniform_real_distribution<double> distribution_0_1(0, 1);
+        static std::uniform_real_distribution<double> distribution_angle(0, 2*M_PI);
+
+        double x, y;
+        if(distribution_0_1(generator) < p) {
+            double theta = distribution_angle(generator);
+            double dist = sqrt(distribution_0_1(generator)) * r;
+            x = prob.q_goal[0] + dist * cos(theta);
+            y = prob.q_goal[1] + dist * sin(theta);
+        } else {
             x = distribution_x(generator);
             y = distribution_y(generator);
-            for(int j = 0; j < prob.obstacles.size(); j++){
-                if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), prob.obstacles[j])){
-                    in_collision = true;
-                    break;
-                }
-            }
-            if(!in_collision){
-                nodes.push_back(Eigen::Vector2d(x, y));
-            }
-            in_collision = false;
         }
+
+        for(const auto& obstacle : prob.obstacles) {
+            if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), obstacle)) {
+                return generateRandomSample(prob, nodes, p, r);
+            }
+        }
+
+        nodes.push_back(Eigen::Vector2d(x, y));
+        return nodes.size() - 1;
     }
 
-    void MyGoalBiasedPRM2D::linkNearestNodes(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const Problem2D& prob){
-        double distance;
-        heuristic.heuristic_values[node_idx] = calculateHeuristic(prob, nodes[node_idx]);
-        for(int i = 0; i < node_idx; i++){
-            distance = (nodes[i] - nodes[node_idx]).norm();
-            if(distance < r && distance > 0){
-                if(!Helper().intersects(prob, nodes[node_idx], nodes[i])){
-                    graph.connect(node_idx, i, distance);
-                }
+
+    int MyGoalBiasRRT2D::findNearestNode(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, const Problem2D& prob){
+        double min_distance = std::numeric_limits<double>::max();
+        int nearest_node_idx = -1;
+
+        for(int i = 0; i < nodes.size() - 1; i++) {
+            if(i == node_idx) continue;
+            double distance = (nodes[i] - nodes[node_idx]).norm();
+            if(distance < min_distance) {
+                min_distance = distance;
+                nearest_node_idx = i;
             }
         }
-        for(int i = node_idx; i < nodes.size(); i++){
-            distance = (nodes[i] - nodes[node_idx]).norm();
-            if(distance < r && distance > 0){
-                if(!Helper().intersects(prob, nodes[node_idx], nodes[i])){
-                    graph.connect(node_idx, i, distance);
-                }
-            }
-        }
+        return nearest_node_idx;
     }
 
-    double MyGoalBiasedPRM2D::calculateHeuristic(const Problem2D& prob, const Eigen::Vector2d& node){
+
+    double MyGoalBiasRRT2D::calculateHeuristic(const Problem2D& prob, const Eigen::Vector2d& node){
         double distance = (node - prob.q_goal).norm();
         return distance;
     }
 
-    void MyGoalBiasedPRM2D::smoothPath(int iterations, std::vector<Eigen::Vector2d>& nodes, const Problem2D& prob){
+    void MyGoalBiasRRT2D::smoothPath(int iterations, std::vector<Eigen::Vector2d>& nodes, const Problem2D& prob){
         for(int i = 0; i < iterations; i++){
             // Randomly select two distinct node indices
             int node1_idx = rand() % nodes.size();

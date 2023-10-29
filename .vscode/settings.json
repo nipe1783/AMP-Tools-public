@@ -73,6 +73,7 @@
         "__string": "cpp",
         "bitset": "cpp",
         "filesystem": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "core": "cpp"
     }
 }

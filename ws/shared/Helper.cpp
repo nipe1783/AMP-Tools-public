@@ -114,7 +114,7 @@ amp::Polygon Helper::minkowskiSum(const amp::Polygon& p1,const amp::Polygon& p2)
  * @param environment Description of parameter
  * @return true for interesection false for no intersection.
  **/
-bool Helper::intersects(const amp::Environment2D& environment, Eigen::Vector2d& start, Eigen::Vector2d& end){
+bool Helper::intersects(const amp::Environment2D& environment, const Eigen::Vector2d& start, const Eigen::Vector2d& end){
     Eigen::Hyperplane<double,2> plane1;
     Eigen::Hyperplane<double,2> plane2;
     Eigen::Vector2d vert1;

@@ -13,7 +13,7 @@ namespace amp {
              * @return Path2D Path from start to goal
              **/
             Path2D plan(const Problem2D& prob) override;
-            std::tuple<Path2D, double, double> plan(const Problem2D& prob, const double r, const int n, bool smooth = false);
+            std::tuple<Path2D, double, double> plan(const Problem2D& prob, const double r, const int n, const double p, const double threshold,  bool smooth = false);
 
             /**
              * @brief Creates nodes samples in the cspace.
@@ -22,7 +22,7 @@ namespace amp {
              * @param num_samples number of samples to create
              * @param graph graph to add samples to
              **/
-            void sampleWorkSpace(const Problem2D& prob, const int num_samples, std::vector<Eigen::Vector2d>& nodes);
+            int generateRandomSample(const Problem2D& prob, std::vector<Eigen::Vector2d>& nodes, const double p, const double r);
 
 
             /**
@@ -33,7 +33,7 @@ namespace amp {
              * @param r radius of max distance
              * @param graph graph to add edges to
              **/
-            void linkNearestNodes(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const Problem2D& prob);
+            int findNearestNode(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, const Problem2D& prob);
 
             double calculateHeuristic(const Problem2D& prob, const Eigen::Vector2d& node);
 

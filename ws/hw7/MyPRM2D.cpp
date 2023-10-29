@@ -99,7 +99,6 @@ namespace amp{
         // end timer:
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        std::cout << "Plan function took: " << duration.count() << " milliseconds" << std::endl;
 
         return std::make_tuple(path, distance, duration.count());
     }
