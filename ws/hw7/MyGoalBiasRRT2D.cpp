@@ -28,7 +28,7 @@ namespace amp{
         double p = 0.05;
         double r = 0.5;
         double threshold = 0.5;
-
+        int prev_node_idx = 0;
         Path2D path;
 
         // step 1: construct cspace and create graph
@@ -65,7 +65,8 @@ namespace amp{
                     for(const auto& node : result.node_path) {
                         path.waypoints.push_back(nodes[node]);
                         if(node > 0){
-                            distance += (nodes[node - 1] - nodes[node]).norm();
+                            distance += (nodes[prev_node_idx] - nodes[node]).norm();
+                            prev_node_idx = node;
                         }
                     }
                     auto end_time = std::chrono::high_resolution_clock::now();
@@ -95,7 +96,7 @@ namespace amp{
         int sample_idx;
         int nearest_idx;
         double distance;
-
+        int prev_node_idx = 0;
         Path2D path;
 
         // step 1: construct cspace and create graph
@@ -132,7 +133,8 @@ namespace amp{
                     for(const auto& node : result.node_path) {
                         path.waypoints.push_back(nodes[node]);
                         if(node > 0){
-                            distance += (nodes[node - 1] - nodes[node]).norm();
+                            distance += (nodes[prev_node_idx] - nodes[node]).norm();
+                            prev_node_idx = node;
                         }
                     }
                     auto end_time = std::chrono::high_resolution_clock::now();

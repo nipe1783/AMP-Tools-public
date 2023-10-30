@@ -18,8 +18,8 @@ namespace amp{
         auto start_time = std::chrono::high_resolution_clock::now();
 
         // constants:
-        const double r = 1.5;
-        const int n = 500;
+        const double r = 2;
+        const int n = 1000;
 
         Path2D path;
 
@@ -59,7 +59,7 @@ namespace amp{
 
         // start timer:
         auto start_time = std::chrono::high_resolution_clock::now();
-
+        int prev_node_idx = 0;
         Path2D path;
 
         // step 1: construct cspace and create graph
@@ -88,10 +88,12 @@ namespace amp{
         for(const auto& node : result.node_path) {
             path.waypoints.push_back(nodes[node]);
             if(node > 0){
-                distance += (nodes[node - 1] - nodes[node]).norm();
+                distance += (nodes[prev_node_idx] - nodes[node]).norm();
+                prev_node_idx = node;
             }
         }
         if(smooth){
+            std::cout<<"smoothing path"<<std::endl;
             smoothPath(100, path.waypoints, prob);
         }
 
@@ -132,20 +134,20 @@ namespace amp{
 
     void MyPRM2D::linkNearestNodes(const int node_idx, std::vector<Eigen::Vector2d>& nodes, const double r, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const Problem2D& prob){
         double distance;
+        int connections = 0;
+        const int max_connections = 5;
+        
         heuristic.heuristic_values[node_idx] = calculateHeuristic(prob, nodes[node_idx]);
-        for(int i = 0; i < node_idx; i++){
+        
+        for(int i = 0; i < nodes.size() && connections < max_connections; i++){
+            // Skip if i is the same as node_idx
+            if (i == node_idx) continue;
+            
             distance = (nodes[i] - nodes[node_idx]).norm();
             if(distance < r && distance > 0){
                 if(!Helper().intersects(prob, nodes[node_idx], nodes[i])){
                     graph.connect(node_idx, i, distance);
-                }
-            }
-        }
-        for(int i = node_idx; i < nodes.size(); i++){
-            distance = (nodes[i] - nodes[node_idx]).norm();
-            if(distance < r && distance > 0){
-                if(!Helper().intersects(prob, nodes[node_idx], nodes[i])){
-                    graph.connect(node_idx, i, distance);
+                    connections++;
                 }
             }
         }
@@ -158,6 +160,8 @@ namespace amp{
 
     void MyPRM2D::smoothPath(int iterations, std::vector<Eigen::Vector2d>& nodes, const Problem2D& prob){
         for(int i = 0; i < iterations; i++){
+            if (nodes.size() <= 2) break; // Check added to prevent infinite loop in case there are only 2 nodes left
+            
             // Randomly select two distinct node indices
             int node1_idx = rand() % nodes.size();
             int node2_idx = rand() % nodes.size();
@@ -180,6 +184,7 @@ namespace amp{
             }
         }
     }
+
 
 
 
