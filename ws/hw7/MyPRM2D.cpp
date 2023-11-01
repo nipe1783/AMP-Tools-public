@@ -95,6 +95,12 @@ namespace amp{
         if(smooth){
             std::cout<<"smoothing path"<<std::endl;
             smoothPath(100, path.waypoints, prob);
+            distance = 0;
+            for(int i = 0; i < path.waypoints.size(); i++){
+                if(i > 0){
+                    distance += (path.waypoints[i] - path.waypoints[i-1]).norm();
+                }
+            }
         }
 
         // end timer:
