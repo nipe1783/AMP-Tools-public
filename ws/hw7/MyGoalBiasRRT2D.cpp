@@ -137,6 +137,7 @@ namespace amp{
                             prev_node_idx = node;
                         }
                     }
+                    
                     auto end_time = std::chrono::high_resolution_clock::now();
                     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
                     return std::make_tuple(path, distance, duration.count());
