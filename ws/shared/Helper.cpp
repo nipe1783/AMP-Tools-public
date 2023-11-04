@@ -316,3 +316,27 @@ double Helper::average(const std::vector<double>& v) {
     double sum = std::accumulate(v.begin(), v.end(), 0.0);
     return sum / v.size();
 }
+
+double Helper::NDDistance(const Eigen::VectorXd& q1, const Eigen::VectorXd& q2){
+    double distance = 0;
+    for(int i = 0; i < q1.size(); i++){
+        distance += std::pow(q1[i] - q2[i], 2);
+    }
+    return std::sqrt(distance);
+}
+
+Eigen::VectorXd Helper::interpolate(const Eigen::VectorXd& node1, const Eigen::VectorXd& node2, const double stepSize){
+    Eigen::VectorXd stepNode(node1.size());
+    double distance = NDDistance(node1, node2);
+    
+    if(distance < stepSize || distance < std::numeric_limits<double>::epsilon()){
+        return node2; // Node2 is either very close or we are stepping over it
+    }
+    
+    double ratio = stepSize / distance;
+    
+    for(int i = 0; i < node1.size(); i++){
+        stepNode[i] = node1[i] + ratio * (node2[i] - node1[i]);
+    }
+    return stepNode;
+}

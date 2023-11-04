@@ -5,6 +5,22 @@
 #include "AMPCore.h"
 #include "MyConfigurationSpace.h"
 
+ bool EnvironmentHelper::collisionNRobot(const amp::MultiAgentProblem2D& problem, const Eigen::VectorXd& q1, const Eigen::VectorXd& q2){
+    // check if any robot collides with obstacle
+    for(int i = 0; i < problem.numAgents(); i++){
+        for(amp::Obstacle2D obstacle : problem.obstacles){
+            Eigen::Vector2d p1(q1[i*2], q1[i*2+1]);
+            Eigen::Vector2d p2(q2[i*2], q2[i*2+1]);
+            if(Helper().intersects(problem, p1, p2)){
+                return true;
+            }
+        }
+    }
+    // check if any robot collides with another robot
+    // TODO
+    return false;
+ }
+
 Eigen::Vector2d EnvironmentHelper::obstacleRefPoint(const amp::Obstacle2D &obstacle, Eigen::Vector2d &pos){
     Eigen::Vector2d refPoint;
     // step 1: compute centroid

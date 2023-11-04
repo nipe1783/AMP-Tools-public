@@ -4,6 +4,11 @@
 
 class Helper{
     public:
+
+        Eigen::VectorXd interpolate(const Eigen::VectorXd& node1,const Eigen::VectorXd& node2, const double stepSize);
+
+        double NDDistance(const Eigen::VectorXd& q1, const Eigen::VectorXd& q2);
+
         /**
          * @brief returns true if a point is on a line segment.
          * 

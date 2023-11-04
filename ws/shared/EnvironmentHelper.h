@@ -63,5 +63,15 @@ class EnvironmentHelper {
          * @return true if point is in obstacle
          **/
         bool inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& obstacle);
+
+        /**
+         * @brief Determines if two CSPace points are in collision. Works for N robots each with 2 DOF.
+         * 
+         * @param problem multi robot problem
+         * @param q1 first centralized cSPace point
+         * @param q2 second centralized cSpace point
+         * @return returnType Description of return value
+         **/
+        bool collisionNRobot(const amp::MultiAgentProblem2D& problem, const Eigen::VectorXd& q1, const Eigen::VectorXd& q2);
         
 };
