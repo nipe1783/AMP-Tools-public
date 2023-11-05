@@ -12,17 +12,19 @@ namespace amp{
     }
 
     bool NDConfigurationSpace::inCollision(const Eigen::VectorXd& cspace_state) const {
+        std::cout<<"HELLO WORLD"<<std::endl;
         return false;
     }
 
-    bool NDConfigurationSpace::inCollision(const Eigen::VectorXd& cspace_state, const amp::MultiAgentProblem2D& problem) const {
+    bool NDConfigurationSpace::inCollision(const Eigen::VectorXd& cspace_state, const amp::MultiAgentProblem2D& problem, const double& padding) const {
         // check if any robot collides with obstacle
-        int dofRobot = problem.agent_properties.size() - 1;
+        int dofRobot = 2;
         for(int i = 0; i < problem.numAgents(); i++){
             double x = cspace_state[i*dofRobot];
             double y = cspace_state[i*dofRobot+1];
             for(amp::Obstacle2D obstacle : problem.obstacles){
-                Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[i/dofRobot].radius);
+                double radius = problem.agent_properties[i].radius;
+                Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[i].radius + .05);
                 if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
                     return true;
                 }
@@ -36,7 +38,7 @@ namespace amp{
             for(int j = 0; j < problem.numAgents(); j++){
                 if(i != j){
                     Eigen::Vector2d pos2(cspace_state[j*dofRobot], cspace_state[j*dofRobot+1]);
-                    if(Helper().distance(pos1, pos2) <= problem.agent_properties[i/dofRobot].radius + problem.agent_properties[j/dofRobot].radius){
+                    if(Helper().distance(pos1, pos2) <= problem.agent_properties[i/dofRobot].radius + problem.agent_properties[j/dofRobot].radius + padding){
                         return true;
                     }
                 }

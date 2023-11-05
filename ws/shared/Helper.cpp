@@ -297,17 +297,46 @@ bool Helper::inCollision(const Eigen::Vector2d& point, const amp::Obstacle2D& ob
 }
 
 
-amp::Obstacle2D Helper::expandObstacle(amp::Obstacle2D obstacle, float delta) const {
-    amp::Obstacle2D enlargedObstacle;
-    std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
-    Eigen::Vector2d centroid = EnvironmentHelper().computeCentroid(vertices);
+// amp::Obstacle2D Helper::expandObstacle(amp::Obstacle2D obstacle, float delta) const {
+//     amp::Obstacle2D enlargedObstacle;
+//     std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
+//     Eigen::Vector2d centroid = EnvironmentHelper().computeCentroid(vertices);
 
+//     for (const Eigen::Vector2d& vertex : vertices) {
+//         Eigen::Vector2d direction = (vertex - centroid).normalized(); // Get the direction from centroid to the vertex and normalize it
+//         Eigen::Vector2d enlargedVertex = vertex + direction * delta;  // Expand vertex along the direction by delta
+//         enlargedObstacle.verticesCCW().push_back(enlargedVertex);
+//     }
+//     return enlargedObstacle;
+// }
+
+amp::Obstacle2D Helper::expandObstacle(const amp::Obstacle2D obstacle, float radius) const{
+    std::vector<Eigen::Vector2d> new_vertices;
+    std::vector<Eigen::Vector2d> vertices = obstacle.verticesCCW();
+    Eigen::Vector2d centroid = Eigen::Vector2d::Zero();
+
+    // Compute the centroid of the obstacle
     for (const Eigen::Vector2d& vertex : vertices) {
-        Eigen::Vector2d direction = (vertex - centroid).normalized(); // Get the direction from centroid to the vertex and normalize it
-        Eigen::Vector2d enlargedVertex = vertex + direction * delta;  // Expand vertex along the direction by delta
-        enlargedObstacle.verticesCCW().push_back(enlargedVertex);
+        centroid += vertex;
     }
-    return enlargedObstacle;
+    centroid /= vertices.size();
+
+    // Expand each vertex away from the centroid by the radius
+    for (Eigen::Vector2d& vertex : vertices) {
+        Eigen::Vector2d dirVec;
+        for (int k = 0; k < 2; ++k) {
+            if (vertex[k] > centroid[k]) {
+                dirVec[k] = 1;
+            } else {
+                dirVec[k] = -1;
+            }
+        }
+        Eigen::Vector2d new_vertex = vertex + radius * dirVec;
+        new_vertices.push_back(new_vertex);
+    }
+
+    // Create a new obstacle with the expanded vertices
+    return amp::Obstacle2D(new_vertices);
 }
 
 

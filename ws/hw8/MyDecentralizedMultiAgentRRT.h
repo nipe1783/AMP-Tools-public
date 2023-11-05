@@ -6,7 +6,7 @@
 #include "NDConfigurationSpace.h"
 
 namespace amp {
-    class MyCentralizedMultiAgentRRT : public amp::CentralizedMultiAgentRRT {
+    class MyDecentralizedMultiAgentRRT : public amp::DecentralizedMultiAgentRRT {
         public:
         
         amp::MultiAgentPath2D plan(const amp::MultiAgentProblem2D& problem) override;
