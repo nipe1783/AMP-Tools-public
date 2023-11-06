@@ -18,13 +18,13 @@ namespace amp{
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::VectorXd> nodes;
 
-        double p = 0.25;
+        double p = 0.05;
         double r = 0.1;
         double epsilon = 0.25;
         int n = 75000;
-        double stepSize = .02;
-        double padding = .1;
-        int numberOfChecks = 20;
+        double stepSize = 1;
+        double padding = .01;
+        int numberOfChecks = 2;
 
         // construct composed cSpace
         int dofSystem = problem.numAgents() * 2;

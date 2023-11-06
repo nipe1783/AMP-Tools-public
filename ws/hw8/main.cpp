@@ -14,23 +14,26 @@
 using namespace amp;
 
 int main(int argc, char** argv) {
-    // MyCentralizedMultiAgentRRT rrt;
+    MyCentralizedMultiAgentRRT rrt;
 
     // // Vectors to store all times and nodes for each agent configuration
     // std::vector<double> times_1_2m, times_1_3m, times_1_4m, times_1_5m, times_1_6m;
     // std::vector<double> nodes_1_2m, nodes_1_3m, nodes_1_4m, nodes_1_5m, nodes_1_6m;
 
-    MultiAgentProblem2D prob_1_2m = HW8::getWorkspace1(2);
+    // MultiAgentProblem2D prob_1_2m = HW8::getWorkspace1(2);
     // MultiAgentPath2D path_1_2m = rrt.plan(prob_1_2m);
     // Visualizer::makeFigure(prob_1_2m, path_1_2m);
 
     // MultiAgentProblem2D prob_1_3m = HW8::getWorkspace1(3);
     // MultiAgentPath2D path_1_3m = rrt.plan(prob_1_3m);
     // Visualizer::makeFigure(prob_1_3m, path_1_3m);
+    // HW8::check(path_1_3m, prob_1_3m);
+
 
     // MultiAgentProblem2D prob_1_4m = HW8::getWorkspace1(4);
     // MultiAgentPath2D path_1_4m = rrt.plan(prob_1_4m);
     // Visualizer::makeFigure(prob_1_4m, path_1_4m);
+    // HW8::check(path_1_4m, prob_1_4m);
 
     // MultiAgentProblem2D prob_1_5m = HW8::getWorkspace1(5);
     // MultiAgentPath2D path_1_5m = rrt.plan(prob_1_5m);
@@ -39,6 +42,7 @@ int main(int argc, char** argv) {
     // MultiAgentProblem2D prob_1_6m = HW8::getWorkspace1(6);
     // prob_1_6m.agent_properties[5].q_init = Eigen::Vector2d(12.0, 14.0);
     // MultiAgentPath2D path_1_6m = rrt.plan(prob_1_6m);
+    // HW8::check(path_1_6m, prob_1_6m);
     // Visualizer::makeFigure(prob_1_6m, path_1_6m);
 
     // Visualizer::showFigures();
@@ -100,5 +104,7 @@ int main(int argc, char** argv) {
     HW8::check(path_2_2m, HW8::getWorkspace1(6));
     Visualizer::makeFigure(HW8::getWorkspace1(6), path_2_2m);
     Visualizer::showFigures();
+
+    // amp::HW8::grade<MyCentralizedMultiAgentRRT, MyDecentralizedMultiAgentRRT>("nipe1783@colorado.edu", argc, argv);
     return 0;
 }

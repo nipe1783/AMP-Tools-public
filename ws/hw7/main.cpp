@@ -250,9 +250,9 @@ int main(int argc, char** argv) {
         //             Visualizer::makeBoxPlot(allSuccessRatesListRRT, labelsRRT, title, xlabel, ylabelRate);
             
                  
-        Visualizer::showFigures();
-        // amp::HW7::hint();
-        // amp::HW7::grade<MyPRM2D, MyGoalBiasRRT2D>("nipe1783@colorado.edu", argc, argv);
+        // Visualizer::showFigures();
+        amp::HW7::hint();
+        amp::HW7::grade<MyPRM2D, MyGoalBiasRRT2D>("nipe1783@colorado.edu", argc, argv);
 
     return 0;
 }

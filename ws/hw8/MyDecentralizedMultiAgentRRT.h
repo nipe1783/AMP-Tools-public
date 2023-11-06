@@ -21,6 +21,6 @@ namespace amp {
          * @param graph Graph of nodes.
          * @return void. updates graph, heurisitc (if there is a valid node to connect) and nodes (if there is no connection available). 
          **/
-        void findNearestNode(const NDConfigurationSpace& cSpace, const MultiAgentProblem2D& problem, std::vector<Eigen::VectorXd>& nodes, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const double& stepSize, const int& numberOfChecks, const double& padding, const  std::vector<Eigen::Vector2d>& agentLocations, const int& agentId);
+        void findNearestNode(const NDConfigurationSpace& cSpace, const MultiAgentProblem2D& problem, std::vector<Eigen::VectorXd>& nodes, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const double& stepSize, const int& numberOfChecks, const double& padding, const  std::vector<std::vector<Eigen::Vector2d>> agentLocations, const int& agentId);
     };
 }
