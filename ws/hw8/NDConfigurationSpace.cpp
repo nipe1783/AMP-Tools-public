@@ -65,7 +65,11 @@ namespace amp{
         for(int i = 0; i < agentLocations.size(); i++){
             if(i != agentId){
                 Eigen::Vector2d pos2(agentLocations[i][0], agentLocations[i][1]);
+                std::cout<<"robot 1 pos: "<<pos1[0]<< " " << pos1[1]<<std::endl;
+                std::cout<<"robot 2 pos: "<<pos2<<std::endl;
+                std::cout<<"distance: "<<Helper().distance(pos1, pos2)<<std::endl;
                 if(Helper().distance(pos1, pos2) <= problem.agent_properties[agentId].radius + problem.agent_properties[i].radius + padding){
+                    std::cout<<"collision detected"<<std::endl;
                     return true;
                 }
             }

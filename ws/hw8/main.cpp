@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
 
     MyDecentralizedMultiAgentRRT rrtDecentralized;
     MultiAgentPath2D path_2_2m = rrtDecentralized.plan(HW8::getWorkspace1(6));
+    HW8::check(path_2_2m, HW8::getWorkspace1(6));
     Visualizer::makeFigure(HW8::getWorkspace1(6), path_2_2m);
     Visualizer::showFigures();
     return 0;
