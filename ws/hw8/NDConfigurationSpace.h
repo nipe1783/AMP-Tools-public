@@ -10,6 +10,7 @@ namespace amp{
         void construct(const amp::MultiAgentProblem2D prob);
         bool inCollision(const Eigen::VectorXd& cspace_state) const override;
         bool inCollision(const Eigen::VectorXd& cspace_state, const amp::MultiAgentProblem2D& prob, const double& padding) const;
+        bool inCollision(const Eigen::VectorXd& cspace_state, const amp::MultiAgentProblem2D& problem, const double& padding, const  std::vector<Eigen::Vector2d>& agentLocations, const int& agentId) const;
 
     };
 }

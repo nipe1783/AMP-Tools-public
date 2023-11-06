@@ -211,7 +211,6 @@ namespace amp{
     void MyCentralizedMultiAgentRRT::generateRandomSample(const NDConfigurationSpace& cSpace, const MultiAgentProblem2D& problem, std::vector<Eigen::VectorXd>& nodes, const double p, const double r, const double& padding){
         std::random_device rd;
         std::default_random_engine generator(rd());
-        double x, y, theta;
         std::uniform_real_distribution<double> distributionX(problem.x_min, problem.x_max);
         std::uniform_real_distribution<double> distributionY(problem.y_min, problem.y_max);
         std::uniform_real_distribution<double> distributionGoal(0, 1);
@@ -231,7 +230,6 @@ namespace amp{
             }
         }
 
-        // sample is valid, add it to nodes.
         nodes.push_back(sample);
     }
 

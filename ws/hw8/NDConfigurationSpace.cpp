@@ -46,4 +46,30 @@ namespace amp{
         }
         return false;
     }
+
+    bool NDConfigurationSpace::inCollision(const Eigen::VectorXd& cspace_state, const amp::MultiAgentProblem2D& problem, const double& padding, const  std::vector<Eigen::Vector2d>& agentLocations, const int& agentId) const {
+        // check if any robot collides with obstacle
+        int dofRobot = 2;
+        double x = cspace_state[0];
+        double y = cspace_state[1];
+        for(amp::Obstacle2D obstacle : problem.obstacles){
+            double radius = problem.agent_properties[agentId].radius;
+            Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[agentId].radius + .05);
+            if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
+                return true;
+            }
+        }
+        
+        // check if any robot collides with another robot
+        Eigen::Vector2d pos1(x, y);
+        for(int i = 0; i < agentLocations.size(); i++){
+            if(i != agentId){
+                Eigen::Vector2d pos2(agentLocations[i][0], agentLocations[i][1]);
+                if(Helper().distance(pos1, pos2) <= problem.agent_properties[agentId].radius + problem.agent_properties[i].radius + padding){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

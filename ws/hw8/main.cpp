@@ -9,6 +9,7 @@
 #include <numeric>
 #include <vector>
 #include "MyCentralizedMultiAgentRRT.h"
+#include "MyDecentralizedMultiAgentRRT.h"
 
 using namespace amp;
 
@@ -19,7 +20,7 @@ int main(int argc, char** argv) {
     // std::vector<double> times_1_2m, times_1_3m, times_1_4m, times_1_5m, times_1_6m;
     // std::vector<double> nodes_1_2m, nodes_1_3m, nodes_1_4m, nodes_1_5m, nodes_1_6m;
 
-    // MultiAgentProblem2D prob_1_2m = HW8::getWorkspace1(2);
+    MultiAgentProblem2D prob_1_2m = HW8::getWorkspace1(2);
     // MultiAgentPath2D path_1_2m = rrt.plan(prob_1_2m);
     // Visualizer::makeFigure(prob_1_2m, path_1_2m);
 
@@ -93,5 +94,10 @@ int main(int argc, char** argv) {
     // Visualizer::makeBoxPlot(dataNodesList, labels, title, xlabel, "Size of Tree");
     // Visualizer::showFigures();
 
+
+    MyDecentralizedMultiAgentRRT rrtDecentralized;
+    MultiAgentPath2D path_2_2m = rrtDecentralized.plan(HW8::getWorkspace1(6));
+    Visualizer::makeFigure(HW8::getWorkspace1(6), path_2_2m);
+    Visualizer::showFigures();
     return 0;
 }
