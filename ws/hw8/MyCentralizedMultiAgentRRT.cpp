@@ -87,6 +87,8 @@ namespace amp{
             }
         }
 
+        // Visualizer::makeFigure(problem, path);
+        // Visualizer::showFigures();
         return path;
     }
 

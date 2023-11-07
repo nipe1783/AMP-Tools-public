@@ -11,10 +11,10 @@ amp::MultiAgentPath2D MyDecentralizedMultiAgentRRT::plan(const amp::MultiAgentPr
     double p = 0.05;
     double r = 0.1;
     double epsilon = 0.25;
-    int n = 15000;
-    double stepSize = .05;
+    int n = 7500;
+    double stepSize = .1;
     double padding = .1;
-    int numberOfChecks = 2;
+    int numberOfChecks = 1;
     int dofSystem = 2;
 
     // initializing agent locations for each timeStep
@@ -51,69 +51,50 @@ amp::MultiAgentPath2D MyDecentralizedMultiAgentRRT::plan(const amp::MultiAgentPr
         nodeGoal[1] = problem.agent_properties[i].q_goal[1];
         nodes.push_back(nodeStart);
         heuristic.heuristic_values[0] = Helper().NDDistance(nodeStart, nodeGoal);
-        int j = 0;
-        int iteration = 0;
-        while(j < n - 1 && iteration < 100){
+        for(int j = 0; j < n; j++){
             // generate random sample in the decentralized cspace
             generateRandomSample(cSpace, problem, nodes, p, r, padding);
 
             // find nearest node in the centralized cspace and update graph.
-            findNearestNode(cSpace, problem, nodes, graph, heuristic, stepSize, numberOfChecks, padding, agentLocations[j+1], i, j);
+            findNearestNode(cSpace, problem, nodes, graph, heuristic, stepSize, numberOfChecks, padding, agentLocations, i);
             
             bool pathConflict = false;
-            if(Helper().NDDistance(nodes[nodes.size() - 1], nodeGoal) < epsilon){
-                iteration++;
-                
-                // add goal node to graph
+            if(Helper().NDDistance(nodes[nodes.size() - 1], nodeGoal) < epsilon) {
                 nodes.push_back(nodeGoal);
                 graph.connect(nodes.size() - 2, nodes.size() - 1, Helper().NDDistance(nodes[nodes.size() - 2], nodes[nodes.size() - 1]));
                 heuristic.heuristic_values[nodes.size() - 1] = 0;
-
-                // find the path from the graph
-                MyAStarAlgorithm aStar;
-                amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nodes.size() - 1)};
-                result = aStar.search(prob_astar, heuristic);
-
-                // check if path along two c spaces is valid.
-                int k = 0;
-                for(const auto& node : result.node_path) {
-                    Eigen::VectorXd currentNode = nodes[node];
-                    Eigen::Vector2d waypoint(currentNode[0], currentNode[1]);
-                    for(int agent = 0; agent < problem.numAgents(); agent++){
-                        if(agent != i && Helper().distance(waypoint, agentLocations[k+1][agent]) <= problem.agent_properties[i].radius + problem.agent_properties[agent].radius + padding){
-                            // Clear the path and start over
-                            nodes.clear();
-                            graph.clear();
-                            heuristic.heuristic_values.clear();
-                            nodes.push_back(nodeStart);
-                            heuristic.heuristic_values[0] = Helper().NDDistance(nodeStart, nodeGoal);
-                            pathConflict = true;
-                            j = 0;
-                            break;
-                        }
-                    }
-                    if(pathConflict){
-                        break;
-                    }
-                    k++;
-                }
-                if(pathConflict){
-                    j = 0;
-                }
-            }
-            if(!pathConflict){
-                j++;;
+                std::cout<<"goal reached"<<std::endl;
+                break;
             }
         }
-        int k = 0;
+
+        // add goal to path.
+        nodes.push_back(nodeGoal);
+        graph.connect(nodes.size() - 2, nodes.size() - 1, Helper().NDDistance(nodes[nodes.size() - 2], nodes[nodes.size() - 1]));
+        heuristic.heuristic_values[nodes.size() - 1] = 0;
+
+        // use A* to find the shortest path between the start and goal nodes.
+        MyAStarAlgorithm aStar;
+        amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nodes.size() - 1)};
+        result = aStar.search(prob_astar, heuristic);
+
+        int j = 0;
         for(const auto& node : result.node_path) {
             Eigen::VectorXd currentNode = nodes[node];
             Eigen::Vector2d waypoint(currentNode[0], currentNode[1]);
             path.agent_paths[i].waypoints.push_back(waypoint);
-            agentLocations[k][i] = waypoint;
-            k++;
+            agentLocations[j][i] = waypoint;
+            j++;
         }
+        for(int k = j; k < n; k++){
+            agentLocations[k][i] = agentLocations[j - 1][i];
+        }
+        graph.clear();
+        heuristic.heuristic_values.clear();
+        nodes.clear();
     }
+    // Visualizer::makeFigure(problem, path);
+    // Visualizer::showFigures();
     return path;
 }
 
@@ -129,7 +110,6 @@ void MyDecentralizedMultiAgentRRT::findNearestNode(const NDConfigurationSpace& c
     }
     if(nearest_node_idx == -1) {
         nodes.pop_back();
-        iteration--;
         return;
     }
     else{
@@ -139,20 +119,18 @@ void MyDecentralizedMultiAgentRRT::findNearestNode(const NDConfigurationSpace& c
         amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nearest_node_idx)};
         AStar::GraphSearchResult result = aStar.search(prob_astar, heuristic);
         int timeStep = result.node_path.size() - 1;
-        std::cout<<"timeStep: "<<timeStep<<std::endl;
-
+        std::vector<Eigen::Vector2d> currentAgentLocations = agentLocations[timeStep];
 
         // check if path along two c space states is valid.
         Eigen::VectorXd stepNode = nodes[nearest_node_idx];
         for(int j = 0; j < numberOfChecks; j++){
             stepNode = Helper().interpolate(stepNode, nodes[nodes.size() - 1], stepSize);
-            if(cSpace.inCollision(stepNode, problem, padding, agentLocations, agentId)) {
+            if(cSpace.inCollision(stepNode, problem, padding, currentAgentLocations, agentId)) {
                 nodes.pop_back();
-                iteration--;
                 return;
             }
         }
-        if(!cSpace.inCollision(stepNode, problem, padding, agentLocations, agentId)){
+        if(!cSpace.inCollision(stepNode, problem, padding, currentAgentLocations, agentId)){
             nodes.pop_back();
             nodes.push_back(stepNode);
             graph.connect(nearest_node_idx, nodes.size() - 1, Helper().distance(stepNode, nodes[nearest_node_idx]));

@@ -54,7 +54,7 @@ namespace amp{
         double y = cspace_state[1];
         for(amp::Obstacle2D obstacle : problem.obstacles){
             double radius = problem.agent_properties[agentId].radius;
-            Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[agentId].radius + .05);
+            Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, .2 + problem.agent_properties[agentId].radius);
             if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
                 return true;
             }
