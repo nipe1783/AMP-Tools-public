@@ -10,8 +10,8 @@ amp::MultiAgentPath2D MyDecentralizedMultiAgentRRT::plan(const amp::MultiAgentPr
     MultiAgentPath2D path(problem.numAgents());
     double p = 0.05;
     double r = 0.1;
-    double epsilon = 0.25;
-    int n = 7500;
+    double epsilon = 0.5;
+    int n = 8000;
     double stepSize = .1;
     double padding = .1;
     int numberOfChecks = 1;

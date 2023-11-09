@@ -24,10 +24,14 @@ namespace amp{
             double y = cspace_state[i*dofRobot+1];
             for(amp::Obstacle2D obstacle : problem.obstacles){
                 double radius = problem.agent_properties[i].radius;
-                Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[i].radius + .05);
-                if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
+                Eigen::Vector2d obstacleRefPoint = EnvironmentHelper().obstacleRefPoint(obstacle, Eigen::Vector2d(x, y));
+                if(Helper().distance(obstacleRefPoint, Eigen::Vector2d(x, y)) <= radius + padding){
                     return true;
                 }
+                // Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, problem.agent_properties[i].radius + .05);
+                // if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
+                //     return true;
+                // }
             }
         }
         // check if any robot collides with another robot
@@ -54,10 +58,15 @@ namespace amp{
         double y = cspace_state[1];
         for(amp::Obstacle2D obstacle : problem.obstacles){
             double radius = problem.agent_properties[agentId].radius;
-            Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, .2 + problem.agent_properties[agentId].radius);
-            if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
+            Eigen::Vector2d obstacleRefPoint = EnvironmentHelper().obstacleRefPoint(obstacle, Eigen::Vector2d(x, y));
+            if(Helper().distance(obstacleRefPoint, Eigen::Vector2d(x, y)) <= radius + padding){
                 return true;
             }
+            // double radius = problem.agent_properties[agentId].radius;
+            // Obstacle2D expandedObstacle = Helper().expandObstacle(obstacle, .2 + problem.agent_properties[agentId].radius);
+            // if(EnvironmentHelper().inCollision(Eigen::Vector2d(x, y), expandedObstacle)) {
+            //     return true;
+            // }
         }
         
         // check if any robot collides with another robot

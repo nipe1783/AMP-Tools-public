@@ -18,13 +18,13 @@ namespace amp{
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::VectorXd> nodes;
 
-        double p = 0.05;
+        double p = 0.03;
         double r = 0.1;
-        double epsilon = 0.25;
-        int n = 75000;
-        double stepSize = 1;
+        double epsilon = .5;
+        int n = 7500;
+        double stepSize = .1;
         double padding = .01;
-        int numberOfChecks = 2;
+        int numberOfChecks = 1;
 
         // construct composed cSpace
         int dofSystem = problem.numAgents() * 2;
@@ -71,6 +71,11 @@ namespace amp{
                 break;
             }
         }
+
+        // add goal node
+        nodes.push_back(nodeGoal);
+        graph.connect(nodes.size() - 2, nodes.size() - 1, Helper().NDDistance(nodes[nodes.size() - 2], nodes[nodes.size() - 1]));
+        heuristic.heuristic_values[nodes.size() - 1] = 0;
         
         // use A* to find the shortest path between the start and goal nodes.
         MyAStarAlgorithm aStar;

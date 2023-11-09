@@ -21,7 +21,7 @@
     return false;
  }
 
-Eigen::Vector2d EnvironmentHelper::obstacleRefPoint(const amp::Obstacle2D &obstacle, Eigen::Vector2d &pos){
+Eigen::Vector2d EnvironmentHelper::obstacleRefPoint(const amp::Obstacle2D &obstacle, const Eigen::Vector2d &pos){
     Eigen::Vector2d refPoint;
     // step 1: compute centroid
     Eigen::Vector2d centroid = computeCentroid(obstacle);

@@ -12,7 +12,7 @@ class EnvironmentHelper {
          * @param i index of the obstacle.
          * @return obstacle reference point
          **/
-        static Eigen::Vector2d obstacleRefPoint(const amp::Obstacle2D &obstacle, Eigen::Vector2d &pos);
+        static Eigen::Vector2d obstacleRefPoint(const amp::Obstacle2D &obstacle, const Eigen::Vector2d &pos);
 
         /**
          * @brief Computes the centroid of the ith obstacle in the environment.
