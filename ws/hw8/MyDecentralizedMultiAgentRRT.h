@@ -10,7 +10,7 @@ namespace amp {
         public:
         
         amp::MultiAgentPath2D plan(const amp::MultiAgentProblem2D& problem) override;
-        std::tuple<MultiAgentPath2D, double, double> plan(const amp::MultiAgentProblem2D& problem, bool verbose);
+        std::tuple<MultiAgentPath2D, double> plan(const amp::MultiAgentProblem2D& problem, bool verbose);
         void generateRandomSample(const NDConfigurationSpace& cSpace, const MultiAgentProblem2D& multiAgentprob, std::vector<Eigen::VectorXd>& nodes, const double p, const double r, const double& padding);
 
         /**

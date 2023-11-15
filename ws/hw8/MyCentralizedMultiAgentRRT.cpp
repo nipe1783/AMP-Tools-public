@@ -18,12 +18,12 @@ namespace amp{
         amp::LookupSearchHeuristic heuristic;
         std::vector<Eigen::VectorXd> nodes;
 
-        double p = 0.03;
+        double p = 0.05;
         double r = 0.1;
-        double epsilon = .5;
-        int n = 7500;
+        double epsilon = .25;
+        int n = 75000;
         double stepSize = .1;
-        double padding = .01;
+        double padding = .2;
         int numberOfChecks = 1;
 
         // construct composed cSpace
@@ -178,7 +178,7 @@ namespace amp{
 
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        return std::make_tuple(path, nodes.size(), duration.count());;
+        return std::make_tuple(path, nodes.size(), duration.count());
     }
 
     void MyCentralizedMultiAgentRRT::findNearestNode(const NDConfigurationSpace& cSpace, const MultiAgentProblem2D& problem, std::vector<Eigen::VectorXd>& nodes, amp::Graph<double>& graph, amp::LookupSearchHeuristic& heuristic, const double& stepSize, const int& numberOfChecks, const double& padding){

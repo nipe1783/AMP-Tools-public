@@ -5,6 +5,104 @@
 
 using namespace amp;
 
+std::tuple<MultiAgentPath2D, double> MyDecentralizedMultiAgentRRT::plan(const amp::MultiAgentProblem2D& problem, bool verbose){
+
+    // start timer
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    MultiAgentPath2D path(problem.numAgents());
+    double p = 0.05;
+    double r = 0.1;
+    double epsilon = 0.25;
+    int n = 7500;
+    double stepSize = 1;
+    double padding = .01;
+    int numberOfChecks = 1;
+    int dofSystem = 2;
+
+    // initializing agent locations for each timeStep
+    std::vector<std::vector<Eigen::Vector2d>> agentLocations(n, std::vector<Eigen::Vector2d>(problem.numAgents(), Eigen::Vector2d(0, 0)));
+    for(int i = 0; i < problem.numAgents(); i++){
+        for(int j = 0; j < n; j++){
+            agentLocations[j][i] = Eigen::Vector2d(problem.agent_properties[i].q_init[0], problem.agent_properties[i].q_init[1]);
+        }
+    }
+
+     // loop through each robot, finding a path for each.
+    for(int i = 0; i < problem.numAgents(); i++){
+        std::vector<Eigen::VectorXd> nodes;
+        amp::Graph<double> graph;
+        amp::LookupSearchHeuristic heuristic;
+        AStar::GraphSearchResult result;
+        Eigen::VectorXd lowerBounds(dofSystem);
+        Eigen::VectorXd upperBounds(dofSystem);
+        for(int i = 0; i < upperBounds.size(); i += dofSystem)
+        {   
+            lowerBounds[i] = problem.x_min;
+            lowerBounds[i+1] = problem.y_min;
+            upperBounds[i] = problem.x_max;
+            upperBounds[i+1] = problem.y_max;
+
+        }
+        NDConfigurationSpace cSpace(lowerBounds, upperBounds);
+        cSpace.construct(problem);
+        Eigen::VectorXd nodeStart(dofSystem);
+        Eigen::VectorXd nodeGoal(dofSystem);
+        nodeStart[0] = problem.agent_properties[i].q_init[0];
+        nodeStart[1] = problem.agent_properties[i].q_init[1];
+        nodeGoal[0] = problem.agent_properties[i].q_goal[0];
+        nodeGoal[1] = problem.agent_properties[i].q_goal[1];
+        nodes.push_back(nodeStart);
+        heuristic.heuristic_values[0] = Helper().NDDistance(nodeStart, nodeGoal);
+        for(int j = 0; j < n; j++){
+            // generate random sample in the decentralized cspace
+            generateRandomSample(cSpace, problem, nodes, p, r, padding);
+
+            // find nearest node in the centralized cspace and update graph.
+            findNearestNode(cSpace, problem, nodes, graph, heuristic, stepSize, numberOfChecks, padding, agentLocations, i);
+            
+            bool pathConflict = false;
+            if(Helper().NDDistance(nodes[nodes.size() - 1], nodeGoal) < epsilon) {
+                nodes.push_back(nodeGoal);
+                graph.connect(nodes.size() - 2, nodes.size() - 1, Helper().NDDistance(nodes[nodes.size() - 2], nodes[nodes.size() - 1]));
+                heuristic.heuristic_values[nodes.size() - 1] = 0;
+                std::cout<<"goal reached"<<std::endl;
+                break;
+            }
+        }
+
+        // add goal to path.
+        nodes.push_back(nodeGoal);
+        graph.connect(nodes.size() - 2, nodes.size() - 1, Helper().NDDistance(nodes[nodes.size() - 2], nodes[nodes.size() - 1]));
+        heuristic.heuristic_values[nodes.size() - 1] = 0;
+
+        // use A* to find the shortest path between the start and goal nodes.
+        MyAStarAlgorithm aStar;
+        amp::ShortestPathProblem prob_astar = {std::make_shared<amp::Graph<double>>(graph), 0, static_cast<amp::Node>(nodes.size() - 1)};
+        result = aStar.search(prob_astar, heuristic);
+
+        int j = 0;
+        for(const auto& node : result.node_path) {
+            Eigen::VectorXd currentNode = nodes[node];
+            Eigen::Vector2d waypoint(currentNode[0], currentNode[1]);
+            path.agent_paths[i].waypoints.push_back(waypoint);
+            agentLocations[j][i] = waypoint;
+            j++;
+        }
+        for(int k = j; k < n; k++){
+            agentLocations[k][i] = agentLocations[j - 1][i];
+        }
+        graph.clear();
+        heuristic.heuristic_values.clear();
+        nodes.clear();
+    }
+    // Visualizer::makeFigure(problem, path);
+    // Visualizer::showFigures();
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    return std::make_tuple(path, duration.count());
+}
+
 amp::MultiAgentPath2D MyDecentralizedMultiAgentRRT::plan(const amp::MultiAgentProblem2D& problem){
 
     MultiAgentPath2D path(problem.numAgents());
