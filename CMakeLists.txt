@@ -21,6 +21,18 @@ if(NOT DEFINED AMP_EXCLUDE_LOGS)
     option(AMP_EXCLUDE_LOGS "Build without logging" OFF)
 endif()
 
+# OMPL
+find_package(ompl REQUIRED)
+find_package(yaml-cpp REQUIRED)
+include_directories(
+    includes
+    ${OMPL_INCLUDE_DIRS}
+    ${YAML_CPP_INCLUDE_DIRS}
+    /usr/local/include/ompl-1.6
+    /usr/include/eigen3
+)
+
+
 # C++ libs
 find_package (Eigen3 3.3.4 REQUIRED NO_MODULE)
 find_package(OpenSSL REQUIRED)
