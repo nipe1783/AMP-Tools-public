@@ -45,14 +45,11 @@ class isStateValid_2D : public ob::StateValidityChecker
             boost::geometry::append(agent.outer(), point(x - width / 2, y + height / 2));
             boost::geometry::append(agent.outer(), point(x - width / 2, y - height / 2));
 
-            std::cout << std::endl;
-
             // Check agent is disjoint from all obstacles
             for(const amp::Obstacle2D &o : prob_->obstacles){
                 polygon poly;
                 ObstacleOmpl obs(o);
                 poly = obs.poly_;
-                std::cout << std::endl;
                 if (!boost::geometry::disjoint(agent, poly))
                     return false;
             }

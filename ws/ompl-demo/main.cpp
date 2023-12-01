@@ -19,6 +19,8 @@ namespace og = ompl::geometric;
 
 int main(int argc, char** argv) {
 
+    ompl::msg::setLogLevel(ompl::msg::LOG_INFO);
+
     Problem2D prob;
     amp::Path2D path;
     PlannerOmpl planner;
