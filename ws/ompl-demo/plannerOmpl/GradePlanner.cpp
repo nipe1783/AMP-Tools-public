@@ -13,8 +13,8 @@ namespace amp{
             path.waypoints.push_back(prob.q_init);
             path.waypoints.push_back(prob.q_goal);
         }
-        // amp::Visualizer::makeFigure(prob, path);
-        // amp::Visualizer::showFigures();
+        Visualizer::makeFigure(prob, path);
+        Visualizer::showFigures();
         return path;
     }
 

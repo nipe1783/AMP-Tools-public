@@ -27,9 +27,9 @@ int main(int argc, char** argv) {
     // prob = HW5::getWorkspace1();
     // path = planner.planGeometric(prob);
 
-    prob = HW2::getWorkspace1();
-    path = planner.planGeometric(prob);
-    Visualizer::makeFigure(prob, path);
+    // prob = HW2::getWorkspace1();
+    // path = planner.planGeometric(prob);
+    // Visualizer::makeFigure(prob, path);
 
     // prob = HW2::getWorkspace2();
     // path = planner.planGeometric(prob);
@@ -56,9 +56,9 @@ int main(int argc, char** argv) {
     // title = "OMPL RRT Benchmark results for AMP HW workspaces";
     // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1"}, title, "WS", "Time");
 
-    Visualizer::showFigures();
+    // Visualizer::showFigures();
 
-    // amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
+    amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
     
 
     return 0;

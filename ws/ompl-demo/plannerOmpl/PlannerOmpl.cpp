@@ -30,7 +30,7 @@ amp::Path2D PlannerOmpl::planGeometric(const amp::Problem2D& prob){
     bool solved = ss->solve(5.0);
     if (solved)
     {
-        // ss->simplifySolution();
+        ss->simplifySolution();
         pathOmpl = ss->getSolutionPath();
         // translate ompl path to amp path
         for(int i = 0; i < pathOmpl.getStates().size(); i++){

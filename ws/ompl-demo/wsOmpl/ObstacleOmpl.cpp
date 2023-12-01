@@ -16,5 +16,6 @@ ObstacleOmpl::ObstacleOmpl(const amp::Obstacle2D& obstacle){
     for(int i = 0; i < obstacle.verticesCCW().size(); i++){
         points.push_back(boost::geometry::model::d2::point_xy<double>(obstacle.verticesCCW()[i][0], obstacle.verticesCCW()[i][1]));
     }
+    points.push_back(boost::geometry::model::d2::point_xy<double>(obstacle.verticesCCW()[0][0], obstacle.verticesCCW()[0][1]));
     boost::geometry::assign_points(poly_, points);
 }

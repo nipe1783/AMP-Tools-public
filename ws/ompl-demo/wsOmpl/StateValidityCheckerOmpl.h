@@ -25,16 +25,17 @@ class isStateValid_2D : public ob::StateValidityChecker
     
         bool isValid(const ob::State *state) const override
         {
-            const auto *state2D = state->as<ob::RealVectorStateSpace::StateType>();
-            double x = state2D->values[0];
-            double y = state2D->values[1];
+            auto compState = state->as<ob::CompoundStateSpace::StateType>();
+            auto xyState = compState->as<ob::RealVectorStateSpace::StateType>(0);
+            const double x = xyState->values[0];
+            const double y = xyState->values[1];
 
             if (!si_->satisfiesBounds(state))
                 return false;
 
             // Define the width and height of the square
-            double width = .5/* your width value */;
-            double height = .5/* your height value */;
+            double width = .1/* your width value */;
+            double height = .1/* your height value */;
 
             // Calculate corner points of the square
             polygon agent;
@@ -42,13 +43,16 @@ class isStateValid_2D : public ob::StateValidityChecker
             boost::geometry::append(agent.outer(), point(x + width / 2, y - height / 2));
             boost::geometry::append(agent.outer(), point(x + width / 2, y + height / 2));
             boost::geometry::append(agent.outer(), point(x - width / 2, y + height / 2));
-            boost::geometry::append(agent.outer(), point(x - width / 2, y - height / 2)); // Closing the loop
+            boost::geometry::append(agent.outer(), point(x - width / 2, y - height / 2));
+
+            std::cout << std::endl;
 
             // Check agent is disjoint from all obstacles
             for(const amp::Obstacle2D &o : prob_->obstacles){
                 polygon poly;
                 ObstacleOmpl obs(o);
                 poly = obs.poly_;
+                std::cout << std::endl;
                 if (!boost::geometry::disjoint(agent, poly))
                     return false;
             }

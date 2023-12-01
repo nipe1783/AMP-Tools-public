@@ -81,7 +81,22 @@
         "__errc": "cpp",
         "cctype": "cpp",
         "cstdarg": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "clocale": "cpp",
+        "cwctype": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp",
+        "charconv": "cpp",
+        "codecvt": "cpp",
+        "forward_list": "cpp",
+        "source_location": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp",
+        "stdfloat": "cpp",
+        "stop_token": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
