@@ -15,6 +15,7 @@ class PlannerOmpl {
 
     public:
         // methods:
-        amp::Path2D plan(const amp::Problem2D& prob);
+        amp::Path2D planGeometric(const amp::Problem2D& prob);
+        std::tuple<amp::Path2D, double, double> planGeometric(const amp::Problem2D& prob, bool verbose);
         og::SimpleSetupPtr geometricSimpleSetUp(const amp::Problem2D *prob);
 };
