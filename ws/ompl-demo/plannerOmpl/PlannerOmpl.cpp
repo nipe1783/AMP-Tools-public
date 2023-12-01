@@ -27,10 +27,10 @@ amp::Path2D PlannerOmpl::planGeometric(const amp::Problem2D& prob){
     ss->setup();
 
     // solve the instance
-    bool solved = ss->solve(30.0);
+    bool solved = ss->solve(5.0);
     if (solved)
     {
-        ss->simplifySolution();
+        // ss->simplifySolution();
         pathOmpl = ss->getSolutionPath();
         // translate ompl path to amp path
         for(int i = 0; i < pathOmpl.getStates().size(); i++){
@@ -62,7 +62,7 @@ std::tuple<amp::Path2D, double, double> PlannerOmpl::planGeometric(const amp::Pr
     ss->setup();
 
     // solve the instance
-    ompl::base::PlannerStatus solved = ss->solve(30.0);
+    ompl::base::PlannerStatus solved = ss->solve(5.0);
     if (solved)
     {
         ss->simplifySolution();
@@ -91,7 +91,7 @@ og::SimpleSetupPtr PlannerOmpl::geometricSimpleSetUp(const amp::Problem2D *prob)
     AgentOmpl* a = new AgentOmpl(
         "None",
         "None",
-        {1, 1},
+        {0.001, 0.001},
         {prob->q_init[0], prob->q_init[1]},
         {prob->q_goal[0], prob->q_goal[1]}
     );

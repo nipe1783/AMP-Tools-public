@@ -15,7 +15,14 @@ class PlannerOmpl {
 
     public:
         // methods:
+
+        // geometric planning methods:
         amp::Path2D planGeometric(const amp::Problem2D& prob);
         std::tuple<amp::Path2D, double, double> planGeometric(const amp::Problem2D& prob, bool verbose);
         og::SimpleSetupPtr geometricSimpleSetUp(const amp::Problem2D *prob);
+
+        // kinodynamic planning methods:
+        // amp::Path2D planKinodynamic(const amp::Problem2D& prob);
+        // std::tuple<amp::Path2D, double, double> planKinodynamic(const amp::Problem2D& prob, bool verbose);
+        // og::SimpleSetupPtr kinodynamicSimpleSetUp(const amp::Problem2D *prob);
 };
