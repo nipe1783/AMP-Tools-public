@@ -11,11 +11,13 @@
 #include "hw/HW7.h"
 #include "benchmark/Benchmark.h"
 #include "plannerOmpl/GradePlanner.h"
+#include "plannerOmpl/SimpleCarPlanner.h"
 
 using namespace amp;
 namespace fs = std::filesystem;
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
+namespace oc = ompl::control;
 
 int main(int argc, char** argv) {
 
@@ -58,10 +60,14 @@ int main(int argc, char** argv) {
     // title = "OMPL RRT Benchmark results for AMP HW workspaces";
     // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1"}, title, "WS", "Time");
 
-    // Visualizer::showFigures();
-
-    amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
+    // amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
     
+    SimpleCarPlanner carPlanner;
+    prob = HW2::getWorkspace1();
+    path = carPlanner.planKinodynamic(prob);
+    Visualizer::makeFigure(prob, path);
+
+    Visualizer::showFigures();
 
     return 0;
 }
