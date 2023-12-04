@@ -3,7 +3,7 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/control/spaces/RealVectorControlSpace.h>
 #include <ompl/control/SimpleSetup.h>
-#include "../wsOmpl/SimpleCar.h"
+#include "SimpleCar.h"
 
 namespace ob = ompl::base;
 namespace oc = ompl::control;

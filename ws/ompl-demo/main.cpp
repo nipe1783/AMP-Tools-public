@@ -11,7 +11,7 @@
 #include "hw/HW7.h"
 #include "benchmark/Benchmark.h"
 #include "plannerOmpl/GradePlanner.h"
-#include "plannerOmpl/SimpleCarPlanner.h"
+#include "simpleCar/SimpleCarPlanner.h"
 
 using namespace amp;
 namespace fs = std::filesystem;

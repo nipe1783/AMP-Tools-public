@@ -2,13 +2,14 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/control/planners/rrt/RRT.h>
 #include <ompl/control/planners/sst/SST.h>
-#include "../wsOmpl/SimpleCar.h"
 #include <ompl/control/SimpleSetup.h>
 #include "AMPCore.h"
-#include "../wsOmpl/StateValidityCheckerSimpleCar.h"
-#include  "../wsOmpl/StatePropogationSimpleCar.h"
-#include "../wsOmpl/SimpleCarGoalRegion.h"
+#include "SimpleCarStateValidityChecker.h"
+#include  "SimpleCar.h"
+#include "SimpleCarGoalRegion.h"
 #include "../benchmark/PostProcessing.h"
+#include <functional>
+
 
 namespace fs = std::filesystem;
 namespace ob = ompl::base;
@@ -96,11 +97,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
         "car", 
         {0.5 ,0.5}, 
         {prob->q_init[0], prob->q_init[1]}, 
-        {prob->q_goal[0], prob->q_init[1]}, 
-        prob->x_min,
-        prob->x_max,
-        prob->y_min,
-        prob->y_max
+        {prob->q_goal[0], prob->q_init[1]}
     );
 
     // creating state space:
@@ -110,10 +107,13 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     // creating simple setup:
     auto ss = std::make_shared<oc::SimpleSetup>(cspace);
     // adding validity checker:
-    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new isStateValid_SimpleCar(ss->getSpaceInformation(), prob, car)));
+    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new SimpleCarStateValidityChecker(ss->getSpaceInformation(), prob, car)));
     // simulating system dynamics:
-    auto odeSolver(std::make_shared<oc::ODEBasicSolver<>>(ss->getSpaceInformation(), &SecondOrderCarODE));
-    ss->setStatePropagator(oc::ODESolver::getStatePropagator(odeSolver, &SecondOrderCarODEPostIntegration));
+    auto odeFunction = std::bind(&SimpleCar::SecondOrderODE, car, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    auto odeSolver = std::make_shared<oc::ODEBasicSolver<>>(ss->getSpaceInformation(), odeFunction);
+    auto postIntegrationFunction = std::bind(&SimpleCar::SecondOrderCarODEPostIntegration, car, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+    ss->setStatePropagator(oc::ODESolver::getStatePropagator(odeSolver, postIntegrationFunction));
+
     // set starting state:
     ob::ScopedState<> start(space);
     start[0] = car->start_[0]; // x
