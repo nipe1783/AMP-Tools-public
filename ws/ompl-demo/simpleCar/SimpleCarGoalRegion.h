@@ -16,7 +16,6 @@ class GoalRegion2ndOrderCar: public ob::GoalRegion
          * @param st current state of the agent.
          * @return double, distance to goal.
          */
-        
         double distanceGoal(const ob::State *st) const override;
 
     private:

@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
     
     SimpleCarPlanner carPlanner;
     prob = HW2::getWorkspace1();
-    path = carPlanner.planKinodynamic(prob);
+    path = carPlanner.planKinodynamic(prob, 0.3);
     Visualizer::makeFigure(prob, path);
 
     Visualizer::showFigures();

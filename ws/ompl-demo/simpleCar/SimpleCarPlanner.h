@@ -14,9 +14,11 @@ public:
     SimpleCarPlanner();
     ~SimpleCarPlanner();
 
+    // fields:
+    double safetyMargin_ = 0.0;
+
     // methods:
-    void test();
-    amp::Path2D planKinodynamic(const amp::Problem2D& prob);
+    amp::Path2D planKinodynamic(const amp::Problem2D& prob, const double& safetyMargin = 0.0);
     oc::SimpleSetupPtr kinodynamicSimpleSetUp(const amp::Problem2D *prob);
     ob::StateSpacePtr createStateSpace(const amp::Problem2D& prob, const SimpleCar& car);
     oc::ControlSpacePtr createControlSpace(ob::StateSpacePtr &space);

@@ -23,7 +23,9 @@
                 "/home/linuxbrew/.linuxbrew/Cellar/ompl/1.6.0_3/include/ompl-1.6",
                 "/home/linuxbrew/.linuxbrew/Cellar/ompl/1.6.0_3/include/ompl-1.6",
                 "/home/linuxbrew/.linuxbrew/Cellar/ompl/1.6.0_3/include/ompl-1.6",
-                "${workspaceFolder}/include"
+                "${workspaceFolder}/include",
+                "/home/linuxbrew/.linuxbrew/Cellar/ompl/1.6.0_3/include/ompl-1.6",
+                "/home/linuxbrew/.linuxbrew/Cellar/ompl/1.6.0_3/include/ompl-1.6"
             ],
             "defines": [],
             "macFrameworkPath": [

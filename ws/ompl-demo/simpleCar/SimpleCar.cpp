@@ -4,6 +4,7 @@
 #include <ompl/control/planners/rrt/RRT.h>
 #include <ompl/control/planners/sst/SST.h>
 #include <ompl/control/spaces/RealVectorControlSpace.h>
+#include <stdexcept> 
 
 namespace ob = ompl::base;
 namespace oc = ompl::control;

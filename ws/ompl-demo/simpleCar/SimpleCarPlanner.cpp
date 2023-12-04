@@ -21,11 +21,36 @@ SimpleCarPlanner::SimpleCarPlanner() {
 SimpleCarPlanner::~SimpleCarPlanner() {
 }
 
-void SimpleCarPlanner::test() {
-    std::cout << "Hello World!" << std::endl;
+ob::StateSpacePtr SimpleCarPlanner::createStateSpace(const amp::Problem2D& prob, const SimpleCar& car) {
+    // setting simpleCar state space:
+    ob::StateSpacePtr space = std::make_shared<ob::CompoundStateSpace>();
+    // x, y, velocity, turning angle
+    space->as<ob::CompoundStateSpace>()->addSubspace(ob::StateSpacePtr(new ob::RealVectorStateSpace(4)), 1.0);
+    // car heading
+    space->as<ob::CompoundStateSpace>()->addSubspace(ob::StateSpacePtr(new ob::SO2StateSpace()), 1.0);
+    space->as<ob::CompoundStateSpace>()->lock();
+
+    // set the bounds for the RealVectorStateSpace 
+    ob::RealVectorBounds bounds(4);
+    bounds.setLow(0, prob.x_min + prob.x_min*safetyMargin_); //  x lower bound
+    bounds.setHigh(0, prob.x_max - prob.x_max*safetyMargin_); // x upper bound
+    bounds.setLow(1, prob.y_min + prob.y_min*safetyMargin_);  // y lower bound
+    bounds.setHigh(1, prob.y_max - prob.y_max*safetyMargin_); // y upper bound
+    bounds.setLow(2, car.v_min_ + car.v_min_*safetyMargin_);  // v lower bound
+    bounds.setHigh(2, car.v_max_ - car.v_max_*safetyMargin_); // v upper bound
+    bounds.setLow(3, car.phi_min_ + car.phi_min_*safetyMargin_);  // phi lower bound
+    bounds.setHigh(3,car.phi_max_ - car.phi_max_*safetyMargin_); // phi upper bound
+    space->as<ob::CompoundStateSpace>()->as<ob::RealVectorStateSpace>(0)->setBounds(bounds);
+
+    return space;
 }
 
-amp::Path2D SimpleCarPlanner::planKinodynamic(const amp::Problem2D& prob) {
+amp::Path2D SimpleCarPlanner::planKinodynamic(const amp::Problem2D& prob, const double& safetyMargin) {
+    // check safety margin:
+    if (safetyMargin < 0.0 || safetyMargin > 1.0) {
+        throw std::invalid_argument("Safety margin must be between 0 and 1");
+    }
+    safetyMargin_ = safetyMargin;
     // create simple setup object
     oc::SimpleSetupPtr ss = kinodynamicSimpleSetUp(&prob);
     oc::PathControl pathOmpl(ss->getSpaceInformation()); // create empty path
@@ -50,30 +75,6 @@ amp::Path2D SimpleCarPlanner::planKinodynamic(const amp::Problem2D& prob) {
         OMPL_ERROR("No solution found");
     }
     return path;
-}
-
-ob::StateSpacePtr SimpleCarPlanner::createStateSpace(const amp::Problem2D& prob, const SimpleCar& car) {
-    // setting simpleCar state space:
-    ob::StateSpacePtr space = std::make_shared<ob::CompoundStateSpace>();
-    // x, y, velocity, turning angle
-    space->as<ob::CompoundStateSpace>()->addSubspace(ob::StateSpacePtr(new ob::RealVectorStateSpace(4)), 1.0);
-    // car heading
-    space->as<ob::CompoundStateSpace>()->addSubspace(ob::StateSpacePtr(new ob::SO2StateSpace()), 1.0);
-    space->as<ob::CompoundStateSpace>()->lock();
-
-    // set the bounds for the RealVectorStateSpace 
-    ob::RealVectorBounds bounds(4);
-    bounds.setLow(0, prob.x_min); //  x lower bound
-    bounds.setHigh(0, prob.x_max); // x upper bound
-    bounds.setLow(1, prob.y_min);  // y lower bound
-    bounds.setHigh(1, prob.y_max); // y upper bound
-    bounds.setLow(2, car.v_min_);  // v lower bound
-    bounds.setHigh(2, car.v_max_); // v upper bound
-    bounds.setLow(3, car.phi_min_);  // phi lower bound
-    bounds.setHigh(3,car.phi_max_); // phi upper bound
-    space->as<ob::CompoundStateSpace>()->as<ob::RealVectorStateSpace>(0)->setBounds(bounds);
-
-    return space;
 }
 
 oc::ControlSpacePtr SimpleCarPlanner::createControlSpace(ob::StateSpacePtr &space) {
@@ -107,7 +108,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     // creating simple setup:
     auto ss = std::make_shared<oc::SimpleSetup>(cspace);
     // adding validity checker:
-    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new SimpleCarStateValidityChecker(ss->getSpaceInformation(), prob, car)));
+    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new SimpleCarStateValidityChecker(ss->getSpaceInformation(), prob, car, &safetyMargin_)));
     // simulating system dynamics:
     auto odeFunction = std::bind(&SimpleCar::SecondOrderODE, car, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     auto odeSolver = std::make_shared<oc::ODEBasicSolver<>>(ss->getSpaceInformation(), odeFunction);

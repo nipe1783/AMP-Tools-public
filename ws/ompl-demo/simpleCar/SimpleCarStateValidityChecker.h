@@ -15,7 +15,7 @@ typedef boost::geometry::model::polygon<point> polygon;
 class SimpleCarStateValidityChecker : public ob::StateValidityChecker
 {
     public:
-        SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car);
+        SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car, const double *safetyMargin);
 
         /**
          * @brief Determines if a state is valid
@@ -29,5 +29,6 @@ class SimpleCarStateValidityChecker : public ob::StateValidityChecker
         const ob::SpaceInformation *si_;
         const amp::Problem2D *prob_;
         const SimpleCar *car_;
+        const double *safetyMargin_;
     
 };

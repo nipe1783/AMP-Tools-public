@@ -8,13 +8,15 @@
 #include "../wsOmpl/ObstacleOmpl.h"
 #include "SimpleCar.h"
 
+namespace ob = ompl::base;
 
-SimpleCarStateValidityChecker::SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car) :
+SimpleCarStateValidityChecker::SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car, const double *safetyMargin) :
     ob::StateValidityChecker(si)
     {
         si_ = si.get();
         prob_ = prob;
         car_ = car;
+        safetyMargin_ = safetyMargin;
     }
 
 bool SimpleCarStateValidityChecker::isValid(const ob::State *state) const
@@ -26,11 +28,10 @@ bool SimpleCarStateValidityChecker::isValid(const ob::State *state) const
 
     if (!si_->satisfiesBounds(state))
         return false;
-    
 
     // Define the width and height of the collision box.
-    double width = car_->shape_[0];
-    double height = car_->shape_[1];
+    double width = car_->shape_[0] + (car_->shape_[0] * (*safetyMargin_));
+    double height = car_->shape_[1] + (car_->shape_[1] * (*safetyMargin_));
 
     // Calculate corner points of the square
     polygon agent;
