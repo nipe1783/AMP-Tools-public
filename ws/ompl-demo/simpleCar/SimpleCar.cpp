@@ -16,8 +16,8 @@ SimpleCar::SimpleCar(std::string name, std::string dyn, std::vector<double> shap
     shape_ = shape;
     start_ = s;
     goal_ = g;
-    phi_min_ = -M_PI/10;
-    phi_max_ = M_PI/10;
+    phi_min_ = -M_PI/3;
+    phi_max_ = M_PI/3;
     v_min_ = 0;
     v_max_ = 1;
 }

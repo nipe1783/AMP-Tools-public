@@ -32,14 +32,14 @@ ob::StateSpacePtr SimpleCarPlanner::createStateSpace(const amp::Problem2D& prob,
 
     // set the bounds for the RealVectorStateSpace 
     ob::RealVectorBounds bounds(4);
-    bounds.setLow(0, prob.x_min + prob.x_min*safetyMargin_); //  x lower bound
-    bounds.setHigh(0, prob.x_max - prob.x_max*safetyMargin_); // x upper bound
-    bounds.setLow(1, prob.y_min + prob.y_min*safetyMargin_);  // y lower bound
-    bounds.setHigh(1, prob.y_max - prob.y_max*safetyMargin_); // y upper bound
-    bounds.setLow(2, car.v_min_ + car.v_min_*safetyMargin_);  // v lower bound
-    bounds.setHigh(2, car.v_max_ - car.v_max_*safetyMargin_); // v upper bound
-    bounds.setLow(3, car.phi_min_ + car.phi_min_*safetyMargin_);  // phi lower bound
-    bounds.setHigh(3,car.phi_max_ - car.phi_max_*safetyMargin_); // phi upper bound
+    bounds.setLow(0, prob.x_min); //  x lower bound
+    bounds.setHigh(0, prob.x_max); // x upper bound
+    bounds.setLow(1, prob.y_min);  // y lower bound
+    bounds.setHigh(1, prob.y_max); // y upper bound
+    bounds.setLow(2, car.v_min_);  // v lower bound
+    bounds.setHigh(2, car.v_max_); // v upper bound
+    bounds.setLow(3, car.phi_min_);  // phi lower bound
+    bounds.setHigh(3,car.phi_max_); // phi upper bound
     space->as<ob::CompoundStateSpace>()->as<ob::RealVectorStateSpace>(0)->setBounds(bounds);
 
     return space;
@@ -96,7 +96,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     SimpleCar *car = new SimpleCar(
         "car", 
         "car", 
-        {0.5 ,0.5}, 
+        {1 ,1 }, 
         {prob->q_init[0], prob->q_init[1]}, 
         {prob->q_goal[0], prob->q_init[1]}
     );

@@ -7,6 +7,6 @@ class Benchmark{
 
     public:
         // methods:
-        static std::tuple<std::vector<double>, std::vector<double>, std::vector<bool>> runBenchmark(const amp::Problem2D& prob, PlannerOmpl planner, int iterations);
+        static std::tuple<std::vector<double>, std::vector<double>, std::vector<double>, std::vector<bool>> runBenchmark(const amp::Problem2D& prob, PlannerOmpl planner, int iterations);
     
 };

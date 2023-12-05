@@ -44,10 +44,11 @@ amp::Path2D PlannerOmpl::planGeometric(const amp::Problem2D& prob){
     return path;
 }
 
-std::tuple<amp::Path2D, double, double> PlannerOmpl::planGeometric(const amp::Problem2D& prob, bool verbose){
+std::tuple<amp::Path2D, double, double, double> PlannerOmpl::planGeometric(const amp::Problem2D& prob, bool verbose){
 
     amp::Path2D path;
     double time = 0;
+    double nodes = 0;
     double pathLength = 0;
     
     // create simple setup
@@ -64,7 +65,12 @@ std::tuple<amp::Path2D, double, double> PlannerOmpl::planGeometric(const amp::Pr
     // solve the instance
     ompl::base::PlannerStatus solved = ss->solve(5.0);
     if (solved)
-    {
+    {   
+        // get number of sampled states:
+        ob::PlannerData data(ss->getSpaceInformation());
+        ss->getPlanner()->getPlannerData(data);
+        nodes = data.numVertices();
+
         ss->simplifySolution();
         pathOmpl = ss->getSolutionPath();
 
@@ -83,7 +89,7 @@ std::tuple<amp::Path2D, double, double> PlannerOmpl::planGeometric(const amp::Pr
     {
         OMPL_ERROR("No solution found");
     }
-    return std::make_tuple(path, time, pathLength);
+    return std::make_tuple(path, time, pathLength, nodes);
 }
 
 og::SimpleSetupPtr PlannerOmpl::geometricSimpleSetUp(const amp::Problem2D *prob){

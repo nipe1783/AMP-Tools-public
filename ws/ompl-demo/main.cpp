@@ -28,8 +28,9 @@ int main(int argc, char** argv) {
     PlannerOmpl planner;
     std::string title;
 
-    // prob = HW5::getWorkspace1();
+    // prob = HW2::getWorkspace1();
     // path = planner.planGeometric(prob);
+    // Visualizer::makeFigure(prob, path);
 
     // prob = HW2::getWorkspace1();
     // path = planner.planGeometric(prob);
@@ -46,25 +47,56 @@ int main(int argc, char** argv) {
 
     // std::vector<std::vector<double>> allTimesRRT;
     // std::vector<std::vector<double>> allLengthsRRT;
+    // std::vector<std::vector<double>> allNumNodesRRT;
     // std::vector<std::vector<bool>> allSuccessRRT;
 
     // // workspace 1:
     // prob = HW2::getWorkspace1();
-    // std::tuple<std::vector<double>, std::vector<double>, std::vector<bool>> results = Benchmark::runBenchmark(prob, planner, iterations);
+    // std::tuple<std::vector<double>, std::vector<double>, std::vector<double>, std::vector<bool>> results = Benchmark::runBenchmark(prob, planner, iterations);
     // allTimesRRT.push_back(std::get<0>(results));
     // allLengthsRRT.push_back(std::get<1>(results));
-    // allSuccessRRT.push_back(std::get<2>(results));
+    // allNumNodesRRT.push_back(std::get<2>(results));
+    // allSuccessRRT.push_back(std::get<3>(results));
+
+    // // workspace 2:
+    // prob = HW2::getWorkspace2();
+    // results = Benchmark::runBenchmark(prob, planner, iterations);
+    // allTimesRRT.push_back(std::get<0>(results));
+    // allLengthsRRT.push_back(std::get<1>(results));
+    // allNumNodesRRT.push_back(std::get<2>(results));
+    // allSuccessRRT.push_back(std::get<3>(results));
 
     // std::list<std::vector<double>> allTimesRRTList(allTimesRRT.begin(), allTimesRRT.end());
+    // std::list<std::vector<double>> allLengthsRRTList(allLengthsRRT.begin(), allLengthsRRT.end());
+    // std::list<std::vector<double>> allNumNodesRRTList(allNumNodesRRT.begin(), allNumNodesRRT.end());
+    // std::list<std::vector<bool>> allSuccessRRTList(allSuccessRRT.begin(), allSuccessRRT.end());
 
-    // title = "OMPL RRT Benchmark results for AMP HW workspaces";
-    // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1"}, title, "WS", "Time");
+    // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
+    // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1", "WS2"}, title, "WS", "Time (Seconds)");
+
+    // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
+    // Visualizer::makeBoxPlot(allLengthsRRTList, {"WS1", "WS2"}, title, "WS", "Path Length");
+
+    // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
+    // Visualizer::makeBoxPlot(allNumNodesRRTList, {"WS1", "WS2"}, title, "WS", "Number of Nodes");
 
     // amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
     
     SimpleCarPlanner carPlanner;
-    prob = HW2::getWorkspace1();
-    path = carPlanner.planKinodynamic(prob, 0.3);
+    // prob = HW2::getWorkspace1();
+    // path = carPlanner.planKinodynamic(prob);
+    // Visualizer::makeFigure(prob, path);
+
+
+    // Custom prob
+    prob = HW5::getWorkspace1();
+    std::vector<Eigen::Vector2d> vertices = {Eigen::Vector2d(6, 1), Eigen::Vector2d(6, 3), Eigen::Vector2d(6.25, 3), Eigen::Vector2d(6.25, 1)};
+    amp::Obstacle2D obs(vertices);
+    prob.obstacles[0] = obs;
+    std::vector<Eigen::Vector2d> vertices2 = {Eigen::Vector2d(6, -1), Eigen::Vector2d(6, -3), Eigen::Vector2d(6.25, -3), Eigen::Vector2d(6.25, -1)};
+    amp::Obstacle2D obs2(vertices2);
+    prob.obstacles[1] = obs2;
+    path = carPlanner.planKinodynamic(prob, 0.99);
     Visualizer::makeFigure(prob, path);
 
     Visualizer::showFigures();
