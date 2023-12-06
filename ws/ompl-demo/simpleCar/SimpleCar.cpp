@@ -19,7 +19,7 @@ SimpleCar::SimpleCar(std::string name, std::string dyn, std::vector<double> shap
     phi_min_ = -M_PI/3;
     phi_max_ = M_PI/3;
     v_min_ = 0;
-    v_max_ = 1;
+    v_max_ = 2;
 }
 
 void SimpleCar::SecondOrderODE (const oc::ODESolver::StateType& q, const oc::Control* control, oc::ODESolver::StateType& qdot){

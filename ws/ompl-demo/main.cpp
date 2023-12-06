@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
     std::vector<Eigen::Vector2d> vertices2 = {Eigen::Vector2d(6, -1), Eigen::Vector2d(6, -3), Eigen::Vector2d(6.25, -3), Eigen::Vector2d(6.25, -1)};
     amp::Obstacle2D obs2(vertices2);
     prob.obstacles[1] = obs2;
-    path = carPlanner.planKinodynamic(prob, 0.99);
+    path = carPlanner.planKinodynamic(prob, {1.5, 1.5, .2, .5});
     Visualizer::makeFigure(prob, path);
 
     Visualizer::showFigures();

@@ -10,7 +10,7 @@
 
 namespace ob = ompl::base;
 
-SimpleCarStateValidityChecker::SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car, const double *safetyMargin) :
+SimpleCarStateValidityChecker::SimpleCarStateValidityChecker(const ob::SpaceInformationPtr &si, const amp::Problem2D *prob, const SimpleCar *car, const std::vector<double> &safetyMargin) :
     ob::StateValidityChecker(si)
     {
         si_ = si.get();
@@ -30,8 +30,8 @@ bool SimpleCarStateValidityChecker::isValid(const ob::State *state) const
         return false;
 
     // Define the width and height of the collision box.
-    double width = car_->shape_[0] + (car_->shape_[0] * (*safetyMargin_));
-    double height = car_->shape_[1] + (car_->shape_[1] * (*safetyMargin_));
+    double width = car_->shape_[0] + (car_->shape_[0] + safetyMargin_[0]);
+    double height = car_->shape_[1] + (car_->shape_[1] + safetyMargin_[1]);
 
     // Calculate corner points of the square
     polygon agent;

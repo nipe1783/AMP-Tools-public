@@ -9,6 +9,8 @@
 #include "SimpleCarGoalRegion.h"
 #include "../benchmark/PostProcessing.h"
 #include <functional>
+#include <stdexcept>
+#include <cassert>
 
 
 namespace fs = std::filesystem;
@@ -36,20 +38,26 @@ ob::StateSpacePtr SimpleCarPlanner::createStateSpace(const amp::Problem2D& prob,
     bounds.setHigh(0, prob.x_max); // x upper bound
     bounds.setLow(1, prob.y_min);  // y lower bound
     bounds.setHigh(1, prob.y_max); // y upper bound
-    bounds.setLow(2, car.v_min_);  // v lower bound
-    bounds.setHigh(2, car.v_max_); // v upper bound
-    bounds.setLow(3, car.phi_min_);  // phi lower bound
-    bounds.setHigh(3,car.phi_max_); // phi upper bound
+    bounds.setLow(2, car.v_min_ * (1 - safetyMargin_[2])/2);  // v lower bound
+    bounds.setHigh(2, car.v_max_ * (1 - safetyMargin_[2])/2); // v upper bound
+    bounds.setLow(3, car.phi_min_ * (1 - safetyMargin_[3])/2);  // phi lower bound
+    bounds.setHigh(3, car.phi_max_ * (1 - safetyMargin_[3])/2); // phi upper bound
+    std::cout<<"pre phi min: "<< car.phi_min_<<std::endl; // debug
+    std::cout<<"pre phi max: "<< car.phi_max_<<std::endl; // debug
+    std::cout<<"phi min: "<< car.phi_min_ * (1 - safetyMargin_[3])/2<<std::endl;
+    std::cout<<"phi max: "<< car.phi_max_ * (1 - safetyMargin_[3])/2<<std::endl;
     space->as<ob::CompoundStateSpace>()->as<ob::RealVectorStateSpace>(0)->setBounds(bounds);
 
     return space;
 }
 
-amp::Path2D SimpleCarPlanner::planKinodynamic(const amp::Problem2D& prob, const double& safetyMargin) {
-    // check safety margin:
-    if (safetyMargin < 0.0 || safetyMargin > 1.0) {
-        throw std::invalid_argument("Safety margin must be between 0 and 1");
-    }
+amp::Path2D SimpleCarPlanner::planKinodynamic(const amp::Problem2D& prob, const std::vector<double>& safetyMargin) {
+    // checking safety margin vector:
+    assert(safetyMargin.size() == 4 && "Vector length is not 4, [x, y, v, phi]");
+    assert(safetyMargin[0] >= 0 && "x safety margin is negative");
+    assert(safetyMargin[1] >= 0 && "y safety margin is negative");
+    assert(safetyMargin[2] >= 0 && safetyMargin[2] <= 1 && "v safety margin is not between 0 and 1");
+    assert(safetyMargin[3] >= 0 && safetyMargin[3] <= 1 && "phi safety margin is not between 0 and 1");
     safetyMargin_ = safetyMargin;
     // create simple setup object
     oc::SimpleSetupPtr ss = kinodynamicSimpleSetUp(&prob);
@@ -96,7 +104,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     SimpleCar *car = new SimpleCar(
         "car", 
         "car", 
-        {1 ,1 }, 
+        {0.5 ,0.5 }, 
         {prob->q_init[0], prob->q_init[1]}, 
         {prob->q_goal[0], prob->q_init[1]}
     );
@@ -108,7 +116,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     // creating simple setup:
     auto ss = std::make_shared<oc::SimpleSetup>(cspace);
     // adding validity checker:
-    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new SimpleCarStateValidityChecker(ss->getSpaceInformation(), prob, car, &safetyMargin_)));
+    ss->setStateValidityChecker(ob::StateValidityCheckerPtr(new SimpleCarStateValidityChecker(ss->getSpaceInformation(), prob, car, safetyMargin_)));
     // simulating system dynamics:
     auto odeFunction = std::bind(&SimpleCar::SecondOrderODE, car, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     auto odeSolver = std::make_shared<oc::ODEBasicSolver<>>(ss->getSpaceInformation(), odeFunction);

@@ -15,10 +15,10 @@ public:
     ~SimpleCarPlanner();
 
     // fields:
-    double safetyMargin_ = 0.0;
+    std::vector<double> safetyMargin_ = {0.0, 0.0, 0.0, 0.0}; // safety margin for: x, y, v, phi
 
     // methods:
-    amp::Path2D planKinodynamic(const amp::Problem2D& prob, const double& safetyMargin = 0.0);
+    amp::Path2D planKinodynamic(const amp::Problem2D& prob, const std::vector<double>& safetyMargin);
     oc::SimpleSetupPtr kinodynamicSimpleSetUp(const amp::Problem2D *prob);
     ob::StateSpacePtr createStateSpace(const amp::Problem2D& prob, const SimpleCar& car);
     oc::ControlSpacePtr createControlSpace(ob::StateSpacePtr &space);
