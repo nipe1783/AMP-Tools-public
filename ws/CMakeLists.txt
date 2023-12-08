@@ -2,6 +2,15 @@ file(GLOB HW_SUBDIRECTORIES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
 
 # Find OMPL package
 find_package(ompl REQUIRED)
+message(STATUS "Found OMPL: ${OMPL_INCLUDE_DIRS}")
+
+# Include directories
+include_directories(
+    includes
+    ${YAML_CPP_INCLUDE_DIRS}
+    /usr/include/eigen3
+    /usr/local/include/ompl-1.6
+)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/shared")
     message("Found user-created libraries")
@@ -15,16 +24,17 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/shared")
         AMPCorePrivate
         AMPCorePublic
         ${OMPL_LIBRARIES}
+        ompl::ompl
     )
 
     # Include OMPL directories
     target_include_directories(user_library PUBLIC
         ${AMP_INCLUDE_DIRS}
         ${AMP_DEPENDENCY_INCLUDE_DIRS}
-        ${OMPL_INCLUDE_DIRS}
         /usr/local/include/ompl-1.6
         /usr/include/eigen3
     )
+
 endif()
 
 foreach(SUBDIR ${HW_SUBDIRECTORIES})
@@ -40,15 +50,17 @@ foreach(SUBDIR ${HW_SUBDIRECTORIES})
             AMPCorePrivate
             AMPCorePublic
             ${OMPL_LIBRARIES}
+            ompl::ompl
         )
+
 
         # Include OMPL directories
         target_include_directories(${TARGET_NAME} PUBLIC
             ${AMP_INCLUDE_DIRS}
             ${AMP_DEPENDENCY_INCLUDE_DIRS}
-            ${OMPL_INCLUDE_DIRS}
-            /usr/local/include/ompl-1.6
             /usr/include/eigen3
+            /usr/local/include/ompl-1.6
+            ${OMPL_INCLUDE_DIRS}
         )
 
         if(TARGET user_library)

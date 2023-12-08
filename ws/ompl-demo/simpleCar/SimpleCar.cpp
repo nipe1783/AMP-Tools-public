@@ -9,16 +9,16 @@
 namespace ob = ompl::base;
 namespace oc = ompl::control;
 
-SimpleCar::SimpleCar(std::string name, std::string dyn, std::vector<double> shape, std::vector<double> s, std::vector<double> g) {
+SimpleCar::SimpleCar(std::string name, std::string dyn, std::vector<double> s, std::vector<double> g) {
     name_ = name;
     dynamics_ = dyn;
     std::cout<<"DYNAMICS: "<<dynamics_<<std::endl;
-    shape_ = shape;
+    shape_ = {0.8, 0.4};
     start_ = s;
     goal_ = g;
     phi_min_ = -M_PI/3;
     phi_max_ = M_PI/3;
-    v_min_ = 0;
+    v_min_ = -1;
     v_max_ = 2;
 }
 

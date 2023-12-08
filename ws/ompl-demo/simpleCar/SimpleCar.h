@@ -12,7 +12,7 @@ class SimpleCar{
 
     public:
         // constructor and destructor:
-        SimpleCar(std::string name, std::string dyn, std::vector<double> shape, std::vector<double> s, std::vector<double> g);
+        SimpleCar(std::string name, std::string dyn, std::vector<double> s, std::vector<double> g);
         ~SimpleCar();
 
         // fields:

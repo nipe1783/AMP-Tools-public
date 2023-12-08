@@ -58,13 +58,13 @@ std::string GetCurrentTimeForFileName()
 // parent function for including date/time information to files
 fs::path appendTimeToFileName(const fs::path& fileName)
 {
-    return fileName.stem().string() + "_" + GetCurrentTimeForFileName() + fileName.extension().string();
+    return fileName.stem().string() + "_" + fileName.extension().string();
 }
 
 // write solultion to the system
 void write2sys(const og::SimpleSetupPtr problem)
 {
-    fs::path sol_dir = "solutions/" + GetCurrentTimeForFileName();
+    fs::path sol_dir = "solutions/";
     fs::create_directories(sol_dir);
 
     std::string fileName = "Output.txt";
@@ -77,7 +77,7 @@ void write2sys(const og::SimpleSetupPtr problem)
 // write solultion to the system
 void write2sys(const oc::SimpleSetupPtr problem)
 {
-    fs::path sol_dir = "solutions/" + GetCurrentTimeForFileName();
+    fs::path sol_dir = "solutions/";
     fs::create_directories(sol_dir);
 
     std::string fileName = "Output.txt";

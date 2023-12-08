@@ -12,6 +12,7 @@
 #include "benchmark/Benchmark.h"
 #include "plannerOmpl/GradePlanner.h"
 #include "simpleCar/SimpleCarPlanner.h"
+#include <fstream>
 
 using namespace amp;
 namespace fs = std::filesystem;
@@ -89,15 +90,60 @@ int main(int argc, char** argv) {
 
 
     // Custom prob
-    prob = HW5::getWorkspace1();
-    std::vector<Eigen::Vector2d> vertices = {Eigen::Vector2d(6, 1), Eigen::Vector2d(6, 3), Eigen::Vector2d(6.25, 3), Eigen::Vector2d(6.25, 1)};
-    amp::Obstacle2D obs(vertices);
-    prob.obstacles[0] = obs;
-    std::vector<Eigen::Vector2d> vertices2 = {Eigen::Vector2d(6, -1), Eigen::Vector2d(6, -3), Eigen::Vector2d(6.25, -3), Eigen::Vector2d(6.25, -1)};
-    amp::Obstacle2D obs2(vertices2);
-    prob.obstacles[1] = obs2;
-    path = carPlanner.planKinodynamic(prob, {1.5, 1.5, .2, .5});
-    Visualizer::makeFigure(prob, path);
+    prob = HW2::getWorkspace1();
+    // std::vector<Eigen::Vector2d> vertices = {Eigen::Vector2d(6, 2), Eigen::Vector2d(6, 3), Eigen::Vector2d(6.25, 3), Eigen::Vector2d(6.25, 2)};
+    // amp::Obstacle2D obs(vertices);
+    // prob.obstacles[0] = obs;
+    // std::vector<Eigen::Vector2d> vertices2 = {Eigen::Vector2d(6, -2), Eigen::Vector2d(6, -3), Eigen::Vector2d(6.25, -3), Eigen::Vector2d(6.25, -2)};
+    // amp::Obstacle2D obs2(vertices2);
+    // prob.obstacles[1] = obs2;
+    // path = carPlanner.planKinodynamic(prob, {0.5, 0.5, .2, .5});
+    // Visualizer::makeFigure(prob, path);
+    // carPlanner.planLTL(prob);
+    // Visualizer::makeFigure(prob, path);
+
+    // LTL Planning
+    carPlanner.planLTL(prob, {0.1, 0.1, 0, 0});
+
+    // exporting data for python animation:
+    std::ofstream obstacles_file("obstacles.csv");
+    std::ofstream bounds_file("bounds.csv");
+    std::ofstream start_file("start.csv");
+    std::ofstream goal_file("goal.csv");
+    std::ofstream path_file("path.csv");
+    
+    // Exporting obstacles
+    for (int i = 0; i < prob.obstacles.size(); i++) {
+        for (int j = 0; j < prob.obstacles[i].verticesCCW().size(); j++) {
+            double x = prob.obstacles[i].verticesCCW()[j][0];
+            double y = prob.obstacles[i].verticesCCW()[j][1];
+            obstacles_file << x << "," << y << std::endl;
+        }
+            if (i < prob.obstacles.size() - 1) {
+            obstacles_file << std::endl;
+        }
+    }
+
+    // Exporting bounds
+    bounds_file << prob.x_min << "," << prob.y_min << std::endl;
+    bounds_file << prob.x_max << "," << prob.y_max << std::endl;
+
+    // Exporting start position
+    start_file << prob.q_init[0] << "," << prob.q_init[1] << std::endl;
+
+    // Exporting start position
+    goal_file << prob.q_goal[0] << "," << prob.q_goal[1] << std::endl;
+
+    // Exporting path
+    for (int i = 0; i < path.waypoints.size(); i++) {
+        path_file << path.waypoints[i][0] << "," << path.waypoints[i][1] << std::endl;
+    }
+
+    // Closing file streams
+    obstacles_file.close();
+    bounds_file.close();
+    start_file.close();
+    path_file.close();
 
     Visualizer::showFigures();
 

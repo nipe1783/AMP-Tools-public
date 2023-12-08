@@ -97,7 +97,9 @@
         "stop_token": "cpp",
         "typeindex": "cpp",
         "valarray": "cpp",
-        "matrixfunctions": "cpp"
+        "matrixfunctions": "cpp",
+        "csignal": "cpp",
+        "shared_mutex": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
