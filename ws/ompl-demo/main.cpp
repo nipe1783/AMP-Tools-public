@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 
 
     // Custom prob
-    prob = HW2::getWorkspace1();
+    prob = HW2::getWorkspace2();
     // std::vector<Eigen::Vector2d> vertices = {Eigen::Vector2d(6, 2), Eigen::Vector2d(6, 3), Eigen::Vector2d(6.25, 3), Eigen::Vector2d(6.25, 2)};
     // amp::Obstacle2D obs(vertices);
     // prob.obstacles[0] = obs;
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
     // Visualizer::makeFigure(prob, path);
 
     // LTL Planning
-    carPlanner.planLTL(prob, {0.1, 0.1, 0, 0});
+    carPlanner.planLTL(prob, {1, 1, 0, 0});
 
     // exporting data for python animation:
     std::ofstream obstacles_file("obstacles.csv");

@@ -2,6 +2,7 @@
 #include <ompl/base/goals/GoalRegion.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <utility>
+#include <cmath> 
 
 namespace ob = ompl::base;
 
