@@ -85,8 +85,8 @@ def read_txt(file_name, integrate, shape):
                 
 
 
-x1 = 1  # Additional length for the dotted box in the x-direction
-y1 = 1  # Additional height for the dotted box in the y-direction
+x1 = 0.8  # Additional length for the dotted box in the x-direction
+y1 = 0.8  # Additional height for the dotted box in the y-direction
 
 def get_car_patch(center_x, center_y, theta, width, height):
     car = patches.Rectangle((center_x - width / 2, center_y - height / 2), width, height, color='blue')
@@ -145,21 +145,67 @@ for start in start_data:
 # Function to animate the car
 def animate(frame):
     global car, dotted_box  # Refer to the global variables
-    if frame < len(path_data):
-        state = path_data[frame]
-        x = state[0]
-        y = state[1]
-        theta = state[4]
-        # Remove the old car and dotted box
-        car.remove()
-        dotted_box.remove()
-        # Create and add new car and dotted box
-        car, dotted_box = get_car_patch(x, y, theta, car_width, car_height)
-        ax.add_patch(car)
-        ax.add_patch(dotted_box)
+    
+    # Use the last frame if the end of the data is reached
+    if frame >= len(path_data):
+        frame = len(path_data) - 1
+
+    state = path_data[frame]
+    x = state[0]
+    y = state[1]
+    theta = state[4]
+
+    # Remove the old car and dotted box
+    car.remove()
+    dotted_box.remove()
+
+    # Create and add new car and dotted box
+    car, dotted_box = get_car_patch(x, y, theta, car_width, car_height)
+    ax.add_patch(car)
+    ax.add_patch(dotted_box)
+
     return car, dotted_box
 
 # Create animation
-anim = FuncAnimation(fig, animate, frames=len(path_data), interval=10, blit=True)
+anim = FuncAnimation(fig, animate, frames=len(path_data) + 200, interval=10, blit=True)
+
+plt.show()
+
+
+
+# Initialize the figure and axis
+fig, ax = plt.subplots()
+x_min, y_min = bounds_data[0]
+x_max, y_max = bounds_data[1]
+ax.set_xlim(x_min - 2, x_max + 2)
+ax.set_ylim(y_min - 2, y_max + 2)
+ax.set_aspect('equal', adjustable='box')
+ax.grid(True)
+
+# Car dimensions
+car_width = .8
+car_height = .4
+
+# Draw all car states
+for state in path_data:
+    x, y, _, _, theta = state
+    car, dotted_box = get_car_patch(x, y, theta, car_width, car_height)
+    ax.add_patch(car)
+    ax.add_patch(dotted_box)
+
+# Draw obstacles
+for obstacle in obstacle_data:
+    polygon = patches.Polygon(obstacle, facecolor='red')
+    ax.add_patch(polygon)
+
+# Draw goal
+for goal in goal_data:
+    circle = patches.Circle(goal, radius=0.5, facecolor='green')
+    ax.add_patch(circle)
+
+# Draw start
+for start in start_data:
+    circle = patches.Circle(start, radius=0.5, facecolor='green')
+    ax.add_patch(circle)
 
 plt.show()

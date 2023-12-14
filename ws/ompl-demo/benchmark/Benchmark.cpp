@@ -9,7 +9,7 @@ std::tuple<std::vector<double>, std::vector<double>, std::vector<double>, std::v
 
     for(int i = 0; i < iterations; i++) {
         auto answer = planner.planGeometric(prob, true);
-        times.push_back(std::get<1>(answer));
+        times.push_back(std::get<1>(answer) * 1000);
         pathLengths.push_back(std::get<2>(answer));
         numNodes.push_back(std::get<3>(answer));
         success.push_back(std::get<0>(answer).waypoints.size() > 0);

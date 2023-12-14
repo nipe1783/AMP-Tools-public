@@ -135,7 +135,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::kinodynamicSimpleSetUp(const amp::Problem2D
     start[3] = 0; // phi
     start[4] = 0; // theta
     // create goal region
-    ob::GoalPtr goal (new GoalRegion2ndOrderCar(ss->getSpaceInformation(), prob->q_goal[0], prob->q_goal[1]));
+    ob::GoalPtr goal (new GoalRegion2ndOrderCar(ss->getSpaceInformation(), prob->q_goal[0], prob->q_goal[1], 1.57));
     // save start and goal
     ss->setStartState(start);
     ss->setGoal(goal);
@@ -175,7 +175,7 @@ oc::SimpleSetupPtr SimpleCarPlanner::LTLsimpleSetUp(const amp::Problem2D *prob){
     start[3] = 0; // phi
     start[4] = 0; // theta
     // create goal region
-    ob::GoalPtr goal (new GoalRegion2ndOrderCar(ss->getSpaceInformation(), prob->q_goal[0], prob->q_goal[1]));
+    ob::GoalPtr goal (new GoalRegion2ndOrderCar(ss->getSpaceInformation(), prob->q_goal[0], prob->q_goal[1], 1.57));
     // save start and goal
     ss->setStartState(start);
     ss->setGoal(goal);

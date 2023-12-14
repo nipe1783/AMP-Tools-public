@@ -8,7 +8,7 @@ class GoalRegion2ndOrderCar: public ob::GoalRegion
 {
     public:
         // constructor:
-        GoalRegion2ndOrderCar(const ob::SpaceInformationPtr &si, double gx, double gy);
+        GoalRegion2ndOrderCar(const ob::SpaceInformationPtr &si, double gx, double gy, double gtheta);
         // methods:
         /**
          * @brief determines agent's distance to goal
@@ -21,4 +21,5 @@ class GoalRegion2ndOrderCar: public ob::GoalRegion
     private:
         const double gx_;
         const double gy_;
+        const double gtheta_;
 };

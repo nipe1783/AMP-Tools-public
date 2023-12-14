@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     PlannerOmpl planner;
     std::string title;
 
-    // prob = HW2::getWorkspace1();
+    // prob = HW2::getWorkspace2();
     // path = planner.planGeometric(prob);
     // Visualizer::makeFigure(prob, path);
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     // allNumNodesRRT.push_back(std::get<2>(results));
     // allSuccessRRT.push_back(std::get<3>(results));
 
-    // // workspace 2:
+    // workspace 2:
     // prob = HW2::getWorkspace2();
     // results = Benchmark::runBenchmark(prob, planner, iterations);
     // allTimesRRT.push_back(std::get<0>(results));
@@ -73,13 +73,13 @@ int main(int argc, char** argv) {
     // std::list<std::vector<bool>> allSuccessRRTList(allSuccessRRT.begin(), allSuccessRRT.end());
 
     // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
-    // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1", "WS2"}, title, "WS", "Time (Seconds)");
+    // Visualizer::makeBoxPlot(allTimesRRTList, {"WS1 and WS2"}, title, "", "Time (ms)");
 
     // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
     // Visualizer::makeBoxPlot(allLengthsRRTList, {"WS1", "WS2"}, title, "WS", "Path Length");
 
     // title = "OMPL RRT Benchmark results for AMP HW2 workspaces";
-    // Visualizer::makeBoxPlot(allNumNodesRRTList, {"WS1", "WS2"}, title, "WS", "Number of Nodes");
+    // Visualizer::makeBoxPlot(allNumNodesRRTList, {"WS1 and WS2"}, title, "", "Number of Nodes");
 
     // amp::HW7::grade<GradePlanner, GradePlanner>("nipe1783@colorado.edu", argc, argv);
     
@@ -99,11 +99,28 @@ int main(int argc, char** argv) {
     // prob.obstacles[1] = obs2;
     // path = carPlanner.planKinodynamic(prob, {0.5, 0.5, .2, .5});
     // Visualizer::makeFigure(prob, path);
-    // carPlanner.planLTL(prob);
+    // carPlanner.planKinodynamic(prob);
     // Visualizer::makeFigure(prob, path);
 
     // LTL Planning
-    carPlanner.planLTL(prob, {1, 1, 0, 0});
+    carPlanner.planLTL(prob, {0.8, 0.8, 0, 0});
+
+    // Parallel parking
+    // prob = HW2::getWorkspace1();
+    // std::vector<Eigen::Vector2d> vertices = {Eigen::Vector2d(9, 2), Eigen::Vector2d(9, 8), Eigen::Vector2d(12, 8), Eigen::Vector2d(12, 2)};
+    // amp::Obstacle2D obs(vertices);
+    // prob.obstacles[0] = obs;
+    // std::vector<Eigen::Vector2d> vertices2 = {Eigen::Vector2d(9, 11.5), Eigen::Vector2d(9, 15), Eigen::Vector2d(12, 15), Eigen::Vector2d(12, 11.5)};
+    // amp::Obstacle2D obs2(vertices2);
+    // prob.obstacles[1] = obs2;
+    // std::vector<Eigen::Vector2d> vertices3 = {Eigen::Vector2d(11, 2), Eigen::Vector2d(11, 15), Eigen::Vector2d(12, 15), Eigen::Vector2d(12, 2)};
+    // amp::Obstacle2D obs3(vertices3);
+    // prob.y_max = 15;
+    // prob.obstacles[2] = obs3;
+    // prob.obstacles[3] = obs3;
+    // prob.obstacles[4] = obs3;
+    // path = carPlanner.planKinodynamic(prob, {0.5, .5, 0, .5});
+    // Visualizer::makeFigure(prob, path);
 
     // exporting data for python animation:
     std::ofstream obstacles_file("obstacles.csv");
